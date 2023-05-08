@@ -1,0 +1,17 @@
+goshellctl:
+  version: "0.0.1-SNAPSHOT-1"
+
+
+kafka:
+  bootstrapServers: "localhost:29092"
+  consumers:
+    -
+      topic: "trooper-events"
+
+    -
+      topic: "trooper-scripts-results"
+
+
+cassandra:
+  hosts: "localhost:9042"
+  keyspace: "goshell"
