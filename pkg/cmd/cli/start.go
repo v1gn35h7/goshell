@@ -1,9 +1,9 @@
 package cli
 
 import (
-	"github.com/goShell/pkg/logging"
-	"github.com/goShell/pkg/service"
 	"github.com/spf13/cobra"
+	"github.com/v1gn35h7/goshell/pkg/logging"
+	"github.com/v1gn35h7/goshell/pkg/service"
 )
 
 func NewStartCommand() *cobra.Command {

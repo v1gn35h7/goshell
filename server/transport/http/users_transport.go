@@ -7,7 +7,7 @@ import (
 
 	"github.com/go-kit/kit/endpoint"
 	httptransport "github.com/go-kit/kit/transport/http"
-	"github.com/goShell/server/goshell"
+	"github.com/v1gn35h7/goshell/server/goshell"
 )
 
 // Get Users

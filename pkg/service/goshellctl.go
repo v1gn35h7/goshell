@@ -11,8 +11,8 @@ import (
 
 	"github.com/Shopify/sarama"
 	"github.com/go-logr/zerologr"
-	"github.com/goShell/pkg/kclient"
 	"github.com/spf13/viper"
+	"github.com/v1gn35h7/goshell/pkg/kclient"
 )
 
 type Service struct {

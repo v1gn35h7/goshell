@@ -3,7 +3,7 @@ package service
 import (
 	"fmt"
 
-	"github.com/goShell/server/goshell"
+	"github.com/v1gn35h7/goshell/server/goshell"
 )
 
 type userService interface {

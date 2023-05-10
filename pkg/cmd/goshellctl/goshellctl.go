@@ -3,11 +3,11 @@ package goshellctl
 import (
 	"fmt"
 
-	"github.com/goShell/internal/datastore/cassdb"
-	"github.com/goShell/pkg/cmd/cli"
-	"github.com/goShell/pkg/constants"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/v1gn35h7/goshell/internal/datastore/cassdb"
+	"github.com/v1gn35h7/goshell/pkg/cmd/cli"
+	"github.com/v1gn35h7/goshell/pkg/constants"
 )
 
 var (

@@ -16,6 +16,7 @@ var (
 func SetUpSession() {
 	chosts := viper.GetString("cassandra.hosts")
 	dbhosts := strings.Split(chosts, ",")
+	fmt.Println(chosts)
 
 	cluster := gocql.NewCluster(dbhosts...)
 	cluster.Keyspace = viper.GetString("cassandra.keyspace")

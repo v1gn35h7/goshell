@@ -8,9 +8,9 @@ import (
 	"github.com/go-kit/kit/log"
 	"github.com/go-kit/kit/transport"
 	httptransport "github.com/go-kit/kit/transport/http"
-	"github.com/goShell/server/service"
 	"github.com/gorilla/mux"
 	"github.com/prometheus/client_golang/prometheus/promhttp"
+	"github.com/v1gn35h7/goshell/server/service"
 )
 
 var (

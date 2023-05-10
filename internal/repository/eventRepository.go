@@ -2,8 +2,8 @@ package respository
 
 import (
 	"github.com/go-logr/zerologr"
-	"github.com/goShell/pkg/goshell"
 	"github.com/kristoiv/gocqltable/recipes"
+	"github.com/v1gn35h7/goshell/pkg/goshell"
 )
 
 type eventRepository struct {
@@ -38,7 +38,7 @@ func (rep *eventRepository) AddEvents(event goshell.Events) {
 		if ok := recover(); ok != nil {
 			rep.logger.Info("System Paniced", "rec:", ok)
 		}
-	}() 
+	}()
 	err := rep.eventTable.Insert(event)
 
 	if err != nil {

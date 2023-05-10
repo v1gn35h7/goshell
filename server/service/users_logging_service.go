@@ -3,7 +3,7 @@ package service
 import (
 	"time"
 
-	"github.com/goShell/server/goshell"
+	"github.com/v1gn35h7/goshell/server/goshell"
 )
 
 func (middelware LoggingServiceMiddleware) GetUsers() ([]string, error) {

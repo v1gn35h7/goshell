@@ -7,17 +7,17 @@ import (
 	"os"
 	"time"
 
-	"github.com/goShell/internal/config"
-	"github.com/goShell/internal/datastore/cassdb"
-	"github.com/goShell/pkg/logging"
-	"github.com/goShell/server/service"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
+	"github.com/v1gn35h7/goshell/internal/config"
+	"github.com/v1gn35h7/goshell/internal/datastore/cassdb"
+	"github.com/v1gn35h7/goshell/pkg/logging"
+	"github.com/v1gn35h7/goshell/server/service"
 
 	kitprometheus "github.com/go-kit/kit/metrics/prometheus"
 	kitlog "github.com/go-kit/log"
-	httptransport "github.com/goShell/server/transport/http"
 	stdprometheus "github.com/prometheus/client_golang/prometheus"
+	httptransport "github.com/v1gn35h7/goshell/server/transport/http"
 )
 
 var (

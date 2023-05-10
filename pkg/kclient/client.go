@@ -6,8 +6,8 @@ import (
 
 	"github.com/Shopify/sarama"
 	"github.com/go-logr/zerologr"
-	respository "github.com/goShell/internal/repository"
-	"github.com/goShell/pkg/goshell"
+	respository "github.com/v1gn35h7/goshell/internal/repository"
+	"github.com/v1gn35h7/goshell/pkg/goshell"
 )
 
 func StartKafkaConsumer(ctx context.Context, consumerName string, logger zerologr.Logger, config *sarama.Config, brokers []string, topic string) {

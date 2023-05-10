@@ -1,4 +1,4 @@
-module github.com/goShell
+module github.com/v1gn35h7/goshell
 
 go 1.19
 

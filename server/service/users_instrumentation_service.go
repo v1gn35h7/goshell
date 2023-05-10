@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/goShell/server/goshell"
+	"github.com/v1gn35h7/goshell/server/goshell"
 )
 
 func (middelware instrumentationServiceMiddleware) GetUsers() (output []string, err error) {

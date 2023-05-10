@@ -3,7 +3,7 @@ package http
 import (
 	"github.com/go-kit/kit/endpoint"
 	log "github.com/go-kit/kit/log"
-	"github.com/goShell/server/service"
+	"github.com/v1gn35h7/goshell/server/service"
 )
 
 type shellEndpoints struct {

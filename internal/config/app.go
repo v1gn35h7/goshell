@@ -4,8 +4,8 @@ import (
 	"fmt"
 
 	"github.com/go-logr/zerologr"
-	"github.com/goShell/pkg/constants"
 	"github.com/spf13/viper"
+	"github.com/v1gn35h7/goshell/pkg/constants"
 )
 
 func ReadConfig(configPath string, logger zerologr.Logger) {
