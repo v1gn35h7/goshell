@@ -2,22 +2,27 @@ package goshell
 
 import (
 	"fmt"
-	"log"
+	"net"
 	"net/http"
 	"os"
+	"os/signal"
+	"syscall"
 	"time"
 
+	kitprometheus "github.com/go-kit/kit/metrics/prometheus"
+	kitgrpc "github.com/go-kit/kit/transport/grpc"
+	kitlog "github.com/go-kit/log"
+	"github.com/oklog/oklog/pkg/group"
+	stdprometheus "github.com/prometheus/client_golang/prometheus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/v1gn35h7/goshell/internal/config"
-	"github.com/v1gn35h7/goshell/internal/datastore/cassdb"
 	"github.com/v1gn35h7/goshell/pkg/logging"
+	"github.com/v1gn35h7/goshell/server/pb"
 	"github.com/v1gn35h7/goshell/server/service"
-
-	kitprometheus "github.com/go-kit/kit/metrics/prometheus"
-	kitlog "github.com/go-kit/log"
-	stdprometheus "github.com/prometheus/client_golang/prometheus"
+	grpctransport "github.com/v1gn35h7/goshell/server/transport/grpc"
 	httptransport "github.com/v1gn35h7/goshell/server/transport/http"
+	"google.golang.org/grpc"
 )
 
 var (
@@ -73,7 +78,7 @@ func bootStrapServer() {
 	config.ReadConfig(configPath, logging.Logger())
 
 	// Init database
-	cassdb.SetUpSession()
+	//cassdb.SetUpSession()
 
 	//Mertics setup
 	fieldKeys := []string{"method", "error"}
@@ -91,7 +96,7 @@ func bootStrapServer() {
 	}, fieldKeys)
 
 	// goShell Service init
-	srvc := service.New()
+	srvc := service.New(logger)
 	serviceLoggingMiddleware := service.NewLoggingServiceMiddleware(logger, srvc)
 	serviceInstrumentationMiddleware := service.NewInstrumentationServiceMiddleware(requestCount, requestLatency, serviceLoggingMiddleware)
 
@@ -108,6 +113,59 @@ func bootStrapServer() {
 		WriteTimeout: 15 * time.Second,
 		ReadTimeout:  15 * time.Second,
 	}
-	log.Fatal(srv.ListenAndServe())
+
+	var g group.Group
+	{
+		// The HTTP listener mounts the Go kit HTTP handler we created.
+		//httpListener, err := net.Listen("tcp", *httpAddr)
+		// if err != nil {
+		// 	logger.Log("transport", "HTTP", "during", "Listen", "err", err)
+		// 	os.Exit(1)
+		// }
+		g.Add(func() error {
+			logger.Log("transport", "HTTP", "addr", "localhost:8080")
+			return srv.ListenAndServe()
+		}, func(error) {
+			//httpListener.Close()
+		})
+	}
+	{
+		// Start gRPC server
+		grpcServer := grpctransport.NewGRPCServer(grpctransport.MakeGetScriptsEndpointMiddleware(srvc, logger))
+		// The gRPC listener mounts the Go kit gRPC server we created.
+		grpcListener, err := net.Listen("tcp", "localhost:8082")
+		if err != nil {
+			logger.Log("transport", "gRPC", "during", "Listen", "err", err)
+			os.Exit(1)
+		}
+
+		g.Add(func() error {
+			logger.Log("transport", "gRPC", "addr", "localhost:8082")
+			// we add the Go Kit gRPC Interceptor to our gRPC service as it is used by
+			// the here demonstrated zipkin tracing middleware.
+			baseServer := grpc.NewServer(grpc.UnaryInterceptor(kitgrpc.Interceptor))
+			pb.RegisterShellServiceServer(baseServer, grpcServer)
+			return baseServer.Serve(grpcListener)
+		}, func(error) {
+			grpcListener.Close()
+		})
+	}
+	{
+		// This function just sits and waits for ctrl-C.
+		cancelInterrupt := make(chan struct{})
+		g.Add(func() error {
+			c := make(chan os.Signal, 1)
+			signal.Notify(c, syscall.SIGINT, syscall.SIGTERM)
+			select {
+			case sig := <-c:
+				return fmt.Errorf("received signal %s", sig)
+			case <-cancelInterrupt:
+				return nil
+			}
+		}, func(error) {
+			close(cancelInterrupt)
+		})
+	}
+	logger.Log("exit", g.Run())
 
 }

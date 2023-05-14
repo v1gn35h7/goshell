@@ -1,7 +1,6 @@
 package cassdb
 
 import (
-	"fmt"
 	"strings"
 
 	"github.com/gocql/gocql"
@@ -16,7 +15,6 @@ var (
 func SetUpSession() {
 	chosts := viper.GetString("cassandra.hosts")
 	dbhosts := strings.Split(chosts, ",")
-	fmt.Println(chosts)
 
 	cluster := gocql.NewCluster(dbhosts...)
 	cluster.Keyspace = viper.GetString("cassandra.keyspace")
@@ -25,7 +23,6 @@ func SetUpSession() {
 	cassdbSession = s
 
 	if err != nil {
-		fmt.Errorf("failed to connect top cassdb", err)
 		panic("Error connecting to cassdb")
 	}
 

@@ -11,10 +11,13 @@ require (
 	github.com/gocql/gocql v1.3.2
 	github.com/gorilla/mux v1.8.0
 	github.com/kristoiv/gocqltable v0.0.0-20160119144122-50cb774da676
+	github.com/oklog/oklog v0.3.2
 	github.com/prometheus/client_golang v1.11.0
 	github.com/rs/zerolog v1.29.1
 	github.com/spf13/cobra v1.7.0
 	github.com/spf13/viper v1.15.0
+	google.golang.org/grpc v1.52.0
+	google.golang.org/protobuf v1.28.1
 )
 
 require (
@@ -45,6 +48,7 @@ require (
 	github.com/mattn/go-isatty v0.0.14 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.1 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
+	github.com/oklog/run v1.1.0 // indirect
 	github.com/pelletier/go-toml/v2 v2.0.6 // indirect
 	github.com/pierrec/lz4/v4 v4.1.17 // indirect
 	github.com/prometheus/client_model v0.2.0 // indirect
@@ -60,7 +64,7 @@ require (
 	golang.org/x/net v0.5.0 // indirect
 	golang.org/x/sys v0.4.0 // indirect
 	golang.org/x/text v0.6.0 // indirect
-	google.golang.org/protobuf v1.28.1 // indirect
+	google.golang.org/genproto v0.0.0-20221227171554-f9683d7f8bef // indirect
 	gopkg.in/inf.v0 v0.9.1 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
