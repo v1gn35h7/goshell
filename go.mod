@@ -9,6 +9,7 @@ require (
 	github.com/go-logr/logr v1.2.4
 	github.com/go-logr/zerologr v1.2.3
 	github.com/gocql/gocql v1.3.2
+	github.com/google/uuid v1.3.0
 	github.com/gorilla/mux v1.8.0
 	github.com/kristoiv/gocqltable v0.0.0-20160119144122-50cb774da676
 	github.com/oklog/oklog v0.3.2

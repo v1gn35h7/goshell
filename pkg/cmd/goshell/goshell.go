@@ -17,6 +17,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/v1gn35h7/goshell/internal/config"
+	"github.com/v1gn35h7/goshell/internal/datastore/cassdb"
 	"github.com/v1gn35h7/goshell/pkg/logging"
 	"github.com/v1gn35h7/goshell/server/pb"
 	"github.com/v1gn35h7/goshell/server/service"
@@ -54,16 +55,16 @@ func printLogo() {
 	fmt.Println("#########################################################")
 	fmt.Println("                                                         ")
 	fmt.Println("                                                         ")
-	fmt.Println("        \"\"\"\"\"\"\"                                   ")
-	fmt.Println("       \"\"       \"\"                                  ")
-	fmt.Println("      \"\"                                              ")
-	fmt.Println("      \"\"                                               ")
-	fmt.Println("      \"\"                \"\"\"\"\"\"                   ")
-	fmt.Println("      \"\"                \"        \"                   ")
-	fmt.Println("      \"\"         \"\"   \"        \"                   ")
-	fmt.Println("       \"\"        \"\"   \"        \"                   ")
-	fmt.Println("         \"\"      \"\"   \"        \"                   ")
-	fmt.Println("           \"\"\"\"\"\"   \"\"\"\"\"\"                  ")
+	fmt.Println("        \"\"\"\"\"\"\"                   \"\"\"\"\"\"\"\"\"\"\"\"                ")
+	fmt.Println("       \"\"       \"\"                             \"\"    							")
+	fmt.Println("      \"\"                                         \"\"    ")
+	fmt.Println("      \"\"                                         \"\"     ")
+	fmt.Println("      \"\"                \"\"\"\"\"\"             \"\"     ")
+	fmt.Println("      \"\"                \"        \"             \"\"     ")
+	fmt.Println("      \"\"         \"\"   \"        \"             \"\"     ")
+	fmt.Println("       \"\"        \"\"   \"        \"             \"\"     ")
+	fmt.Println("         \"\"      \"\"   \"        \"             \"\"     ")
+	fmt.Println("           \"\"\"\"\"\"   \"\"\"\"\"\"             \"\"    ")
 	fmt.Println("                                                         ")
 	fmt.Println("                                                         ")
 	fmt.Println("#########################################################")
@@ -78,7 +79,7 @@ func bootStrapServer() {
 	config.ReadConfig(configPath, logging.Logger())
 
 	// Init database
-	//cassdb.SetUpSession()
+	cassdb.SetUpSession()
 
 	//Mertics setup
 	fieldKeys := []string{"method", "error"}

@@ -20,7 +20,13 @@ module.exports = {
       directory: path.join(__dirname, './frontend/dist/'),
     },
     port: 3000,
-    historyApiFallback: true
+    historyApiFallback: true,
+    proxy: {
+      '/api': {
+        target: 'http://localhost:8080/',
+        changeOrigin: true,
+      },
+    }
   },
   resolve: {
     extensions: [".js", ".jsx"]

@@ -1,10 +1,15 @@
 package service
 
+import (
+	respository "github.com/v1gn35h7/goshell/internal/repository"
+	"github.com/v1gn35h7/goshell/pkg/goshell"
+	"github.com/v1gn35h7/goshell/pkg/logging"
+)
+
 type assetService interface {
-	GetAssets() ([]string, error)
+	GetAssets() ([]*goshell.Asset, error)
 }
 
-func (srvc service) GetAssets() ([]string, error) {
-	assets := []string{"ASSET11", "ASSET212", "ASSET465"}
-	return assets, nil
+func (srvc service) GetAssets() ([]*goshell.Asset, error) {
+	return respository.AssetsRepository(logging.Logger()).GetAssets("")
 }

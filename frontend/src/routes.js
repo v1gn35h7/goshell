@@ -1,0 +1,35 @@
+import React from "react";
+import Dashboard from "./pages/dashboard/Dashboard";
+import Assets from "./pages/assets/Assets";
+import Search from "./pages/search/Search";
+import Scripts from "./pages/scripts/Scripts";
+import ScriptNew from "./pages/scripts/ScriptNew";
+
+var routes = [
+    {
+        path: "/",
+        loader: () => ({ message: "Hello, welcome to FirstApp!" }),
+        element: <Dashboard />,
+      },
+      {
+        path: "/assets",
+        element: <Assets />,
+      },
+      {
+        path: "/search",
+        element: <Search />,
+      },
+      {
+        path: "/scripts",
+        element: <Scripts />,
+        children:[
+         
+        ]
+      },
+      {
+        path: "/scripts/new",
+        element: <ScriptNew />,
+      }
+];
+
+export default routes;

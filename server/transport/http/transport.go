@@ -28,9 +28,11 @@ func MakeHandlers(srvc service.Service, logger log.Logger) http.Handler {
 	r.Handle("/exec", makeExecuteCmdTransport(e.executeCmdEndpoint)).Methods("GET")
 	r.Handle("/connect", makeConnectToHostEndpointTransport(e.connectToHostEndpoint)).Methods("GET")
 	r.Handle("/metrics", promhttp.Handler()).Methods("GET")
-	r.Handle("/assets", getAssetsEnpointTransport(e.getAssetsEndpoint)).Methods("GET")
-	r.Handle("/users", getUsersEndpointTransport(e.getUsersEndpoint)).Methods("GET").Name("get_uses")
-	r.Handle("/users/add", addUserEndpointTransport(e.addUserEndpoint)).Methods("POST").Name("add_user")
+	r.Handle("/api/v1/assets", getAssetsEnpointTransport(e.getAssetsEndpoint)).Methods("GET").Name("get_assets")
+	r.Handle("/api/v1/users", getUsersEndpointTransport(e.getUsersEndpoint)).Methods("GET").Name("get_uses")
+	r.Handle("/api/v1/users/add", addUserEndpointTransport(e.addUserEndpoint)).Methods("POST").Name("add_user")
+	r.Handle("/api/v1/scripts", makeSaveScriptEndpointTransport(e.saveScriptEndpoint)).Methods("POST").Name("save_script")
+	r.Handle("/api/v1/scripts", makeGetScriptEndpointTransport(e.getScriptsEndpoint)).Methods("GET").Name("get_scripts")
 	r.PathPrefix("/").Handler(MakeFrontEndHandler())
 	return r
 }

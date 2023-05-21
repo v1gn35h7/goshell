@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-kit/kit/endpoint"
 	httptransport "github.com/go-kit/kit/transport/http"
+	"github.com/v1gn35h7/goshell/pkg/goshell"
 )
 
 // Shell serviec contracts
@@ -19,12 +20,34 @@ type executeCmdResponse struct {
 }
 
 type connectToEndpointRequest struct {
-	hostId string
+	AgentId         string `json:"AgentId,omitempty"`
+	HostName        string `json:"HostName,omitempty"`
+	Platform        string `json:"Platform,omitempty"`
+	OperatingSystem string `json:"OperatingSystem,omitempty"`
+	Architecture    string `json:"Architecture,omitempty"`
 }
 
 type connectToEndpointResponse struct {
 	Error  string `json:"error"`
 	Status string `json:"status"`
+}
+
+type saveScriptEndpointRequest struct {
+	Title    string
+	Script   string
+	Platform string
+	Type     string
+}
+
+type saveScriptEndpointResponse struct {
+	Error  string `json:"error"`
+	Status string `json:"status"`
+}
+
+type getScriptsEndpointResponse struct {
+	Error  string           `json:"error"`
+	Status string           `json:"status"`
+	List   []goshell.Script `json:"list"`
 }
 
 // Scaffloding endpoints to transport
@@ -46,6 +69,24 @@ func makeConnectToHostEndpointTransport(endpoint endpoint.Endpoint) http.Handler
 	)
 }
 
+func makeSaveScriptEndpointTransport(endpoint endpoint.Endpoint) http.Handler {
+	return httptransport.NewServer(
+		endpoint,
+		decodeSaveScriptEndpointRequest,
+		encodeSaveScriptEndpointResponse,
+		httpSrvOptions...,
+	)
+}
+
+func makeGetScriptEndpointTransport(endpoint endpoint.Endpoint) http.Handler {
+	return httptransport.NewServer(
+		endpoint,
+		decodeConnectToEndpointRequest,
+		encodeSaveScriptEndpointResponse,
+		httpSrvOptions...,
+	)
+}
+
 // Request utilities
 func decodeExecuteCmdRequest(ctx context.Context, request *http.Request) (interface{}, error) {
 	var req executeCmdRequest
@@ -61,7 +102,20 @@ func encodeExecuteCmdRequest(ctx context.Context, w http.ResponseWriter, respons
 }
 
 func decodeConnectToEndpointRequest(ctx context.Context, request *http.Request) (interface{}, error) {
-	var req connectToEndpointRequest
+
+	req := connectToEndpointRequest{
+		AgentId: request.URL.Query().Get("hostId"),
+	}
+
+	return req, nil
+}
+
+func encodeConnectToEndpointResponse(ctx context.Context, w http.ResponseWriter, response interface{}) error {
+	return json.NewEncoder(w).Encode(response)
+}
+
+func decodeSaveScriptEndpointRequest(ctx context.Context, request *http.Request) (interface{}, error) {
+	var req saveScriptEndpointRequest
 	if err := json.NewDecoder(request.Body).Decode(&req); err != nil {
 		return nil, err
 	}
@@ -69,6 +123,6 @@ func decodeConnectToEndpointRequest(ctx context.Context, request *http.Request) 
 	return req, nil
 }
 
-func encodeConnectToEndpointResponse(ctx context.Context, w http.ResponseWriter, response interface{}) error {
+func encodeSaveScriptEndpointResponse(ctx context.Context, w http.ResponseWriter, response interface{}) error {
 	return json.NewEncoder(w).Encode(response)
 }

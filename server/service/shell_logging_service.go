@@ -3,7 +3,7 @@ package service
 import (
 	"time"
 
-	"github.com/v1gn35h7/goshell/server/goshell"
+	"github.com/v1gn35h7/goshell/pkg/goshell"
 )
 
 func (middelware LoggingServiceMiddleware) ExecuteCmd(cmd string) (string, error) {
@@ -24,11 +24,20 @@ func (middelware LoggingServiceMiddleware) ConnectToRemoteHost(hostId string) (b
 	return middelware.next.ConnectToRemoteHost(hostId)
 }
 
-func (middelware LoggingServiceMiddleware) GetScripts(agentId string) ([]*goshell.ShellScript, error) {
+func (middelware LoggingServiceMiddleware) GetScripts(asset goshell.Asset) ([]*goshell.Script, error) {
 	defer func(tm time.Time) {
 		middelware.logger.Log("Method", "GetScripts",
 			"Time Since", time.Since(tm))
 	}(time.Now())
 
-	return middelware.next.GetScripts(agentId)
+	return middelware.next.GetScripts(asset)
+}
+
+func (middelware LoggingServiceMiddleware) SaveScripts(script goshell.Script) (bool, error) {
+	defer func(tm time.Time) {
+		middelware.logger.Log("Method", "SaveScripts",
+			"Time Since", time.Since(tm))
+	}(time.Now())
+
+	return middelware.next.SaveScripts(script)
 }

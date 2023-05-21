@@ -3,9 +3,11 @@ package service
 import (
 	"fmt"
 	"time"
+
+	"github.com/v1gn35h7/goshell/pkg/goshell"
 )
 
-func (middelware instrumentationServiceMiddleware) GetAssets() (output []string, err error) {
+func (middelware instrumentationServiceMiddleware) GetAssets() (output []*goshell.Asset, err error) {
 	defer func(begin time.Time) {
 		lvs := []string{"method", "GetAssets", "error", fmt.Sprint(err != nil)}
 		middelware.requestCount.With(lvs...).Add(1)

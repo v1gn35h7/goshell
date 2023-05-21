@@ -7,6 +7,7 @@ import (
 
 	"github.com/go-kit/kit/endpoint"
 	httptransport "github.com/go-kit/kit/transport/http"
+	"github.com/v1gn35h7/goshell/pkg/goshell"
 )
 
 // Asset service contracts
@@ -15,8 +16,8 @@ type getAssetsRequest struct {
 }
 
 type getAssetsResponse struct {
-	List  []string `json:"list"`
-	Count int64    `json:"count"`
+	List  []goshell.Asset `json:"list"`
+	Count int64           `json:"count"`
 }
 
 // Scaffloding endpoints to transport
@@ -30,9 +31,8 @@ func getAssetsEnpointTransport(endpoint endpoint.Endpoint) http.Handler {
 
 // Request utilities
 func decodeGetAssetsRequest(ctx context.Context, request *http.Request) (interface{}, error) {
-	var req getAssetsRequest
-	if err := json.NewDecoder(request.Body).Decode(&req); err != nil {
-		return nil, err
+	req := getAssetsRequest{
+		Query: request.URL.Query().Get("hostId"),
 	}
 
 	return req, nil

@@ -3,10 +3,11 @@ package service
 import (
 	"time"
 
+	gomodel "github.com/v1gn35h7/goshell/pkg/goshell"
 	"github.com/v1gn35h7/goshell/server/goshell"
 )
 
-func (middelware LoggingServiceMiddleware) GetUsers() ([]string, error) {
+func (middelware LoggingServiceMiddleware) GetUsers() ([]*gomodel.Asset, error) {
 	defer func(tm time.Time) {
 		middelware.logger.Log("Method", "GetUsers",
 			"Time Since", time.Since(tm))
