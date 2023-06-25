@@ -6,10 +6,7 @@ goshell:
 
 kafka:
   bootstrapServers: "localhost:29092"
-  consumers:
-    -
-      topic: "trooper-events"
-
+  consumers:  
     -
       topic: "trooper-scripts-results"
 

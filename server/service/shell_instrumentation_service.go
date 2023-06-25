@@ -49,3 +49,23 @@ func (middelware instrumentationServiceMiddleware) SaveScripts(script goshell.Sc
 	output, err = middelware.next.SaveScripts(script)
 	return
 }
+
+func (middelware instrumentationServiceMiddleware) SendFragment(payload goshell.Fragment) (ackw int32, err error) {
+	defer func(begin time.Time) {
+		lvs := []string{"method", "SendFragment", "error", fmt.Sprint(err != nil)}
+		middelware.requestCount.With(lvs...).Add(1)
+		middelware.requestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
+	}(time.Now())
+
+	return middelware.next.SendFragment(payload)
+}
+
+func (middelware instrumentationServiceMiddleware) SearchResults(query string) (list []*goshell.Output, err error) {
+	defer func(begin time.Time) {
+		lvs := []string{"method", "SearchResults", "error", fmt.Sprint(err != nil)}
+		middelware.requestCount.With(lvs...).Add(1)
+		middelware.requestLatency.With(lvs...).Observe(time.Since(begin).Seconds())
+	}(time.Now())
+
+	return middelware.next.SearchResults(query)
+}

@@ -14,6 +14,7 @@ type shellEndpoints struct {
 	addUserEndpoint       endpoint.Endpoint
 	saveScriptEndpoint    endpoint.Endpoint
 	getScriptsEndpoint    endpoint.Endpoint
+	searchResultsEndpoint endpoint.Endpoint
 }
 
 func MakeEndpoints(srvc service.Service, logger log.Logger) shellEndpoints {
@@ -22,6 +23,8 @@ func MakeEndpoints(srvc service.Service, logger log.Logger) shellEndpoints {
 		executeCmdEndpoint: makeExecuteCmdEndpointMiddleware(srvc, logger),
 
 		saveScriptEndpoint: makeSaveScriptsEndpointMiddleware(srvc, logger),
+
+		searchResultsEndpoint: makeSearchResultsEndpointMiddleware(srvc, logger),
 		//executeCmdEndpointMiddleware := logging.LoggingMiddleware(logger)(executeCmdEndpoint)
 
 		getScriptsEndpoint: makeGetScriptsEndpointMiddleware(srvc, logger),

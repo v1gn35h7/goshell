@@ -3,7 +3,6 @@ package grpc
 import (
 	"context"
 
-	"github.com/go-kit/kit/endpoint"
 	grpctransport "github.com/go-kit/kit/transport/grpc"
 	"github.com/v1gn35h7/goshell/pkg/goshell"
 	"github.com/v1gn35h7/goshell/server/pb"
@@ -22,19 +21,33 @@ type GetScriptResponse struct {
 	Scripts []*goshell.Script `json:"scripts"`
 }
 
+type ShellFragmentRquest struct {
+	Outputs string `protobuf:"bytes,4,opt,name=Output,proto3" json:"Output,omitempty"`
+}
+
+type FragmentResponse struct {
+	Awknowledgement int32 `protobuf:"varint,1,opt,name=Awknowledgement,proto3" json:"Awknowledgement,omitempty"`
+}
+
 // Grpc server
 type grpcServer struct {
-	getScripts grpctransport.Handler
+	getScripts   grpctransport.Handler
+	sendFragment grpctransport.Handler
 	pb.UnimplementedShellServiceServer
 }
 
-func NewGRPCServer(ep endpoint.Endpoint) *grpcServer {
+func NewGRPCServer(endpoints grpcEndpoints) *grpcServer {
 
 	return &grpcServer{
 		getScripts: grpctransport.NewServer(
-			ep,
+			endpoints.GetScriptEndpoint,
 			decodeGetScriptsRequest,
 			encodeGetScriptsResponse,
+		),
+		sendFragment: grpctransport.NewServer(
+			endpoints.SendFragmentEndpoint,
+			decodeSendFragmentRequest,
+			encodeFragmentResponse,
 		),
 	}
 
@@ -46,6 +59,14 @@ func (s *grpcServer) GetScripts(ctx context.Context, req *pb.ShellRequest) (*pb.
 		return nil, err
 	}
 	return rep.(*pb.ShellResponse), nil
+}
+
+func (s *grpcServer) SendFragment(ctx context.Context, req *pb.ShellFragmentRquest) (*pb.FragmentResponse, error) {
+	_, rep, err := s.sendFragment.ServeGRPC(ctx, req)
+	if err != nil {
+		return nil, err
+	}
+	return rep.(*pb.FragmentResponse), nil
 }
 
 // decodeGetScriptsRequest is a transport/grpc.DecodeRequestFunc that converts a
@@ -68,4 +89,18 @@ func encodeGetScriptsResponse(_ context.Context, response interface{}) (interfac
 		})
 	}
 	return &pb.ShellResponse{Scripts: scripts}, nil
+}
+
+// decodeGetScriptsRequest is a transport/grpc.DecodeRequestFunc that converts a
+// gRPC sum request to a user-domain sum request. Primarily useful in a server.
+func decodeSendFragmentRequest(_ context.Context, grpcReq interface{}) (interface{}, error) {
+	req := grpcReq.(*pb.ShellFragmentRquest)
+	return req, nil
+}
+
+// encodeGRPCSumResponse is a transport/grpc.EncodeResponseFunc that converts a
+// user-domain sum response to a gRPC sum reply. Primarily useful in a server.
+func encodeFragmentResponse(_ context.Context, response interface{}) (interface{}, error) {
+	resp := response.(FragmentResponse)
+	return &pb.FragmentResponse{Awknowledgement: resp.Awknowledgement}, nil
 }

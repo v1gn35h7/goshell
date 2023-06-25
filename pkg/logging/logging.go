@@ -8,8 +8,16 @@ import (
 	"github.com/rs/zerolog"
 )
 
+var (
+	logger logr.Logger
+)
+
 // Setups logger instance
 func Logger() logr.Logger {
+	if logger.GetSink() != nil {
+		return logger
+	}
+
 	zerolog.TimeFieldFormat = zerolog.TimeFormatUnixMs
 
 	zerologr.NameFieldName = "logger"
@@ -18,6 +26,6 @@ func Logger() logr.Logger {
 
 	zl := zerolog.New(os.Stderr)
 	zl = zl.With().Caller().Timestamp().Logger()
-	var log logr.Logger = zerologr.New(&zl)
-	return log
+	logger = zerologr.New(&zl)
+	return logger
 }

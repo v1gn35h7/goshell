@@ -42,27 +42,27 @@ export default function Assets(){
                 columns={[
                     {
                         "header": "AgentId",
-                        "colKey": "AgentId"
+                        "colKey": "agentId"
                     },
                     {
                         "header": "HostName",
-                        "colKey": "HostName"
+                        "colKey": "hostName"
                     },
                     {
                         "header": "Platform",
-                        "colKey": "Platform"
+                        "colKey": "platform"
                     },
                     {
                         "header": "OperatingSystem",
-                        "colKey": "OperatingSystem"
+                        "colKey": "operatingSystem"
                     },
                     {
                         "header": "Architecture",
-                        "colKey": "Architecture"
+                        "colKey": "architecture"
                     },
                     {
                         "header": "SyncTime",
-                        "colKey": "SyncTime"
+                        "colKey": "syncTime"
                     }
                 ]}
                 data={assets ? assets : []}

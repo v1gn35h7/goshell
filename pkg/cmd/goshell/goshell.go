@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"net"
 	"net/http"
+	_ "net/http/pprof"
 	"os"
 	"os/signal"
 	"syscall"
@@ -132,7 +133,7 @@ func bootStrapServer() {
 	}
 	{
 		// Start gRPC server
-		grpcServer := grpctransport.NewGRPCServer(grpctransport.MakeGetScriptsEndpointMiddleware(srvc, logger))
+		grpcServer := grpctransport.NewGRPCServer(grpctransport.MakeGrpcEndpoints(srvc, logger))
 		// The gRPC listener mounts the Go kit gRPC server we created.
 		grpcListener, err := net.Listen("tcp", "localhost:8082")
 		if err != nil {

@@ -1,10 +1,10 @@
 package goshell
 
 type Asset struct {
-	AgentId         string
-	Platform        string
-	OperatingSystem string
-	Architecture    string
-	HostName        string
-	SyncTime        string
+	Agentid         string `json:"agentId"`
+	Platform        string `json:"platform"`
+	Operatingsystem string `json:"operatingSystem"`
+	Architecture    string `json:"architecture"`
+	Hostname        string `json:"hostName"`
+	Synctime        string `json:"syncTime"`
 }

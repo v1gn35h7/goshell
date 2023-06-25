@@ -27,6 +27,13 @@ type connectToEndpointRequest struct {
 	Architecture    string `json:"Architecture,omitempty"`
 }
 
+type searchResultsRequest struct {
+	Query string `json:"query"`
+}
+
+// ****************************************************************************************************
+// Response structs
+// ****************************************************************************************************
 type connectToEndpointResponse struct {
 	Error  string `json:"error"`
 	Status string `json:"status"`
@@ -50,7 +57,16 @@ type getScriptsEndpointResponse struct {
 	List   []goshell.Script `json:"list"`
 }
 
+type searchResultsResponse struct {
+	Error  string           `json:"error"`
+	Status string           `json:"status"`
+	List   []goshell.Output `json:"list"`
+	Count  int              `json:"count"`
+}
+
+// ********************************************************************************************************************
 // Scaffloding endpoints to transport
+// *******************************************************************************************************************
 func makeExecuteCmdTransport(endpoint endpoint.Endpoint) http.Handler {
 	return httptransport.NewServer(
 		endpoint,
@@ -87,7 +103,18 @@ func makeGetScriptEndpointTransport(endpoint endpoint.Endpoint) http.Handler {
 	)
 }
 
+func makeSearchResultsEndpointTransport(endpoint endpoint.Endpoint) http.Handler {
+	return httptransport.NewServer(
+		endpoint,
+		decodeSearchResultsRequest,
+		encodeEndpointResponse,
+		httpSrvOptions...,
+	)
+}
+
+// **************************************************************************************************************************
 // Request utilities
+// **************************************************************************************************************************
 func decodeExecuteCmdRequest(ctx context.Context, request *http.Request) (interface{}, error) {
 	var req executeCmdRequest
 	if err := json.NewDecoder(request.Body).Decode(&req); err != nil {
@@ -124,5 +151,20 @@ func decodeSaveScriptEndpointRequest(ctx context.Context, request *http.Request)
 }
 
 func encodeSaveScriptEndpointResponse(ctx context.Context, w http.ResponseWriter, response interface{}) error {
+	return json.NewEncoder(w).Encode(response)
+}
+
+func decodeSearchResultsRequest(ctx context.Context, request *http.Request) (interface{}, error) {
+	req := searchResultsRequest{
+		Query: request.URL.Query().Get("query"),
+	}
+
+	return req, nil
+}
+
+// *****************************
+// Common
+// ++++++++++++++++++++++++++++*
+func encodeEndpointResponse(ctx context.Context, w http.ResponseWriter, response interface{}) error {
 	return json.NewEncoder(w).Encode(response)
 }

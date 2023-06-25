@@ -14,3 +14,10 @@ export function saveScript(scriptPayLoad) {
         return Promise.resolve(data);       
     });
 }
+
+export function searchResults(options) {
+    return axios.get("/api/v1/results", options)
+    .then(response => {
+        return Promise.resolve(response.data);       
+    });
+}

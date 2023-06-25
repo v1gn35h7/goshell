@@ -6,7 +6,8 @@ import { Link, useNavigate } from "react-router-dom";
 export default function ScriptNew(){
     const [title, setTitle] = useState("");
     const [platform, setPlatform] = useState("");
-    const [type, setType] = useState("");
+    const [executionFrequency, setExecutionFrequency] = useState("");
+    const [executionTime, setExecutionTime] = useState("");
     const [script, setScript] = useState("");
     const navigate = useNavigate();
 
@@ -15,7 +16,8 @@ export default function ScriptNew(){
             saveScript({
                 scrip: title,
                 platform: platform,
-                type: type,
+                executionTime: executionTime,
+                executionFrequency: executionFrequency, 
                 script: script
             }),
             {
@@ -56,12 +58,18 @@ export default function ScriptNew(){
                     </select>
                 </div>     
                 <div class="basis-3/4">
-                    <select type="text" class="form-input w-full" placeholder="Script Platform" required onChange={(e) => {
-                        setType(e.target.value)
+                    <select type="text" class="form-input w-full" placeholder="Execution Frequency" required onChange={(e) => {
+                        setExecutionFrequency(e.target.value)
                     }}>
-                        <option selected value={"SINGLE"}>SINGLE EXECUTION</option>
-                        <option value={"SCHEDULED"}>SCHEDULED EXECUTION</option>
+                        <option selected>Daily</option>
+                        <option>Weekly</option>
+                        <option>Monthly</option>
                     </select>
+                </div>
+                <div class="basis-3/4">
+                    <input type="time" class="form-textarea w-full" required onChange={(e) => {
+                        setExecutionTime(e.target.value)
+                    }} />
                 </div>               
             </div>
             <div class="flex flex-row mt-10">

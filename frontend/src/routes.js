@@ -29,6 +29,10 @@ var routes = [
       {
         path: "/scripts/new",
         element: <ScriptNew />,
+      },
+      {
+        path: "/scripts/{id}",
+        element: <ScriptNew />,
       }
 ];
 

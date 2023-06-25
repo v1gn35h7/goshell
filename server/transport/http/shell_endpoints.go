@@ -74,11 +74,11 @@ func makeGetScriptsEndpoint(srvc service.Service) endpoint.Endpoint {
 	return func(_ context.Context, request interface{}) (interface{}, error) {
 		req := request.(connectToEndpointRequest)
 		asset := goshell.Asset{
-			AgentId:         req.AgentId,
+			Agentid:         req.AgentId,
 			Platform:        req.Platform,
-			HostName:        req.HostName,
+			Hostname:        req.HostName,
 			Architecture:    req.Architecture,
-			OperatingSystem: req.OperatingSystem,
+			Operatingsystem: req.OperatingSystem,
 		}
 
 		list, err := srvc.GetScripts(asset)
@@ -101,4 +101,30 @@ func makeGetScriptsEndpoint(srvc service.Service) endpoint.Endpoint {
 func makeGetScriptsEndpointMiddleware(srvc service.Service, logger log.Logger) endpoint.Endpoint {
 	getScriptEndpoint := makeGetScriptsEndpoint(srvc)
 	return logging.LoggingMiddleware(logger)(getScriptEndpoint)
+}
+
+func makeSearchResultsEndpoint(srvc service.Service, logger log.Logger) endpoint.Endpoint {
+	return func(_ context.Context, request interface{}) (interface{}, error) {
+		req := request.(searchResultsRequest)
+
+		list, err := srvc.SearchResults(req.Query)
+		status := "SUCCESS"
+		if err != nil {
+			status = "FAILED"
+			return searchResultsResponse{Error: "Failed to get scripts", Status: status}, err
+		}
+
+		// TODO: refactor this code
+		data := make([]goshell.Output, 0)
+		for _, v := range list {
+			data = append(data, *v)
+		}
+
+		return searchResultsResponse{Error: "", Status: status, List: data}, nil
+	}
+}
+
+func makeSearchResultsEndpointMiddleware(srvc service.Service, logger log.Logger) endpoint.Endpoint {
+	searchResultsEndpoint := makeSearchResultsEndpoint(srvc, logger)
+	return logging.LoggingMiddleware(logger)(searchResultsEndpoint)
 }

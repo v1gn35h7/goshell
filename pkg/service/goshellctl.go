@@ -52,7 +52,7 @@ func (srvc *Service) StartService() (bool, error) {
 		go func(index int, ctx context.Context) {
 			defer wg.Done()
 			consumerName := "consumer-" + strconv.Itoa(index)
-			kclient.StartKafkaConsumer(ctx, consumerName, srvc.logger, kconfig, kproducers, "trooper-events")
+			kclient.StartKafkaConsumer(ctx, consumerName, srvc.logger, kconfig, kproducers, "trooper-scripts-results")
 		}(i, ctc)
 	}
 

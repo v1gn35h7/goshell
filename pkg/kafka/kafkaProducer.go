@@ -1,11 +1,16 @@
 package kafka
 
 import (
+	"encoding/json"
+	"fmt"
+	"log"
 	"strings"
 
 	"github.com/Shopify/sarama"
 	"github.com/go-logr/zerologr"
 	"github.com/spf13/viper"
+	"github.com/v1gn35h7/goshell/pkg/goshell"
+	"github.com/v1gn35h7/goshell/pkg/logging"
 )
 
 var (
@@ -57,4 +62,55 @@ func getKafkaClientConfig() *sarama.Config {
 	config.Producer.Transaction.ID = "trooper_producer"
 	config.Net.MaxOpenRequests = 1
 	return config
+}
+
+func ProduceRecord(srvc interface{}, fragment goshell.Fragment) {
+	kclient := NewKafkaClient(logging.Logger())
+	err := kclient.Producer.BeginTxn()
+
+	if err != nil {
+		kclient.logger.Error(err, "Error in kafka transaction")
+	}
+
+	// Produce some records in transaction
+	for _, output := range fragment.Outputs {
+		record, er := json.Marshal(output)
+
+		if er != nil {
+			kclient.logger.Error(er, "Error ...")
+		}
+		fmt.Println(record)
+		kclient.Producer.Input() <- &sarama.ProducerMessage{Topic: "trooper-scripts-results", Key: nil, Value: sarama.ByteEncoder(record)}
+	}
+
+	// commit transaction
+	err = kclient.Producer.CommitTxn()
+	if err != nil {
+		log.Printf("Producer: unable to commit txn %s\n", err)
+		for {
+			if kclient.Producer.TxnStatus()&sarama.ProducerTxnFlagFatalError != 0 {
+				// fatal error. need to recreate producer.
+				log.Printf("Producer: producer is in a fatal state, need to recreate it")
+				break
+			}
+			// If producer is in abortable state, try to abort current transaction.
+			if kclient.Producer.TxnStatus()&sarama.ProducerTxnFlagAbortableError != 0 {
+				err = kclient.Producer.AbortTxn()
+				if err != nil {
+					// If an error occured just retry it.
+					log.Printf("Producer: unable to abort transaction: %+v", err)
+					continue
+				}
+				break
+			}
+			// if not you can retry
+			err = kclient.Producer.CommitTxn()
+			if err != nil {
+				log.Printf("Producer: unable to commit txn %s\n", err)
+				continue
+			}
+		}
+		return
+	}
+
 }

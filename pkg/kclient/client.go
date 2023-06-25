@@ -2,6 +2,7 @@ package kclient
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 
 	"github.com/Shopify/sarama"
@@ -28,12 +29,16 @@ func StartKafkaConsumer(ctx context.Context, consumerName string, logger zerolog
 
 		select {
 		case msg := <-pconsumer.Messages():
-			logger.Info("Message received... ", "Key:", msg.Key, "Value:", string(msg.Value), "Offset:", msg.Offset)
-			event := goshell.Events{
-				Id:   string(msg.Key),
-				Name: string(msg.Value),
+
+			fmt.Println(msg.Value)
+
+			output := goshell.Output{}
+			json.Unmarshal(msg.Value, &output)
+			logger.Info("Message received... ", "Key:", msg.Key, "Value:", output, "Offset:", msg.Offset)
+			if output.Output != "" {
+				respository.ResultsRepository(logger).AddResults(output)
 			}
-			respository.EventRepository(logger).AddEvents(event)
+
 		case <-ctx.Done():
 			return
 		default:

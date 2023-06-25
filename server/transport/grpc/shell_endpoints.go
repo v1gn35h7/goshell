@@ -17,10 +17,10 @@ func makeExecutGetScriptsEndpoint(srvc service.Service) endpoint.Endpoint {
 	return func(ctx context.Context, request interface{}) (interface{}, error) {
 
 		req := request.(*pb.ShellRequest)
-		asset := goshell.Asset{AgentId: string(req.AgentId),
-			HostName:        string(req.HostName),
+		asset := goshell.Asset{Agentid: string(req.AgentId),
+			Hostname:        string(req.HostName),
 			Platform:        string(req.Platform),
-			OperatingSystem: string(req.OperatingSystem),
+			Operatingsystem: string(req.OperatingSystem),
 			Architecture:    string(req.Architecture),
 		}
 
@@ -33,4 +33,33 @@ func makeExecutGetScriptsEndpoint(srvc service.Service) endpoint.Endpoint {
 func MakeGetScriptsEndpointMiddleware(srvc service.Service, logger log.Logger) endpoint.Endpoint {
 	getScriptEndpoint := makeExecutGetScriptsEndpoint(srvc)
 	return logging.LoggingMiddleware(logger)(getScriptEndpoint)
+}
+
+func makeSendFragmentEndpoint(srvc service.Service) endpoint.Endpoint {
+	return func(ctx context.Context, request interface{}) (interface{}, error) {
+
+		req := request.(*pb.ShellFragmentRquest)
+		payload := goshell.Fragment{
+			Outputs: make([]goshell.Output, 0),
+		}
+
+		for _, op := range req.Outputs {
+			otp := goshell.Output{
+				AgentId:  op.AgentId,
+				HostName: op.HostName,
+				ScriptId: op.ScriptId,
+				Output:   op.Output,
+			}
+			payload.Outputs = append(payload.Outputs, otp)
+		}
+
+		res, err := srvc.SendFragment(payload)
+
+		return FragmentResponse{Awknowledgement: res}, err
+	}
+}
+
+func MakeSendFragmentsEndpointMiddleware(srvc service.Service, logger log.Logger) endpoint.Endpoint {
+	sendFragmentEndpoint := makeSendFragmentEndpoint(srvc)
+	return logging.LoggingMiddleware(logger)(sendFragmentEndpoint)
 }

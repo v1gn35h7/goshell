@@ -21,10 +21,10 @@ func AssetsRepository(logr zerologr.Logger) *assetsRepository {
 	}{
 		recipes.CRUD{ // Here we didn't replace, but rather wrapped the table object in our recipe, effectively adding more methods to the end API
 			TableInterface: Base().NewTable(
-				"assets",                        // The table name
-				[]string{"agentId", "hoatName"}, // Row keys
-				nil,                             // Range keys
-				goshell.Asset{},                 // We pass an instance of the user struct that will be used as a type template during fetches.
+				"assets",        // The table name
+				[]string{},      // Row keys
+				nil,             // Range keys
+				goshell.Asset{}, // We pass an instance of the asset struct that will be used as a type template during fetches.
 			),
 		},
 	}
@@ -42,9 +42,9 @@ func (rep *assetsRepository) UpdateAsset(asset goshell.Asset) (bool, error) {
 			rep.logger.Info("System Paniced", "rec:", ok)
 		}
 	}()
-	asset.SyncTime = time.Now().Format("Mon, 02 Jan 2006 15:04:05 MST")
+	asset.Synctime = time.Now().Format("Mon, 02 Jan 2006 15:04:05 MST")
 
-	_, err := rep.assetsTable.Get(asset.AgentId)
+	_, err := rep.assetsTable.Get(asset.Agentid)
 	if err != nil {
 		err := rep.assetsTable.Insert(asset)
 		if err != nil {
