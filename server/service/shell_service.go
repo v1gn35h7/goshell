@@ -1,10 +1,14 @@
 package service
 
 import (
+	"encoding/json"
+
+	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/google/uuid"
+	"github.com/spf13/viper"
 	respository "github.com/v1gn35h7/goshell/internal/repository"
 	"github.com/v1gn35h7/goshell/pkg/goshell"
-	"github.com/v1gn35h7/goshell/pkg/kafka"
+	intKafka "github.com/v1gn35h7/goshell/pkg/kafka"
 	"github.com/v1gn35h7/goshell/pkg/logging"
 )
 
@@ -37,8 +41,22 @@ func (srvc service) SaveScripts(scriptPayload goshell.Script) (bool, error) {
 }
 
 func (srvc service) SendFragment(fragment goshell.Fragment) (int32, error) {
-	//respository.AssetsRepository(logging.Logger()).UpdateAsset(asset)
-	kafka.ProduceRecord(srvc, fragment)
+	kafkaConfig := make(map[string]kafka.ConfigValue)
+	kafkaConfig["bootstrap.servers"] = viper.GetString("kafka.bootstrapServers")
+
+	kafkaProducer := intKafka.NewProducer(kafkaConfig, logging.Logger())
+
+	resultsTopic := viper.GetString("kafka.results.producer.topic")
+
+	// Produce some records in transaction
+	for _, output := range fragment.Outputs {
+		record, er := json.Marshal(output)
+
+		if er != nil {
+			srvc.logger.Log("Error", "Filed while serializing", "er", er)
+		}
+		kafkaProducer.Create(resultsTopic, record)
+	}
 
 	return int32(1), nil
 }

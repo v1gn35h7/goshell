@@ -116,6 +116,8 @@ func bootStrapServer() {
 		ReadTimeout:  15 * time.Second,
 	}
 
+	// kafka
+
 	var g group.Group
 	{
 		// The HTTP listener mounts the Go kit HTTP handler we created.
