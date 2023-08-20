@@ -16,7 +16,7 @@ export function saveScript(scriptPayLoad) {
 }
 
 export function searchResults(options) {
-    return axios.get("/api/v1/results", options)
+    return axios.get("/api/v1/results", {params: options})
     .then(response => {
         return Promise.resolve(response.data);       
     });

@@ -3,12 +3,12 @@ goshellctl:
 
 
 kafka:
-  bootstrapServers: "localhost:29092"
+  bootstrapServers: "kafka1:9092,kafka2:9093"
   consumers:   
     -
       topic: "trooper-scripts-results"
 
 
 cassandra:
-  hosts: "localhost:9042"
+  hosts: "cassdb:9042"
   keyspace: "goshell"

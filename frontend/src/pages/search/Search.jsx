@@ -8,12 +8,12 @@ export default function Search(){
     const [results, setResults] = useState();
 
 
-    const loadResults = () => {
+    const loadResults = (query) => {
         const loader = toast.loading("Loading results...", {
             autoClose: 5000,
             closeButton: true
         })  
-        Promise.resolve(searchResults([])).then(data => {
+        Promise.resolve(searchResults({query: query})).then(data => {
             console.log(data);
 
             setResults(data.list ? data.list : []);
@@ -45,15 +45,15 @@ export default function Search(){
                     columns={[
                         {
                             "header": "AgentId",
-                            "colKey": "agnetid"
+                            "colKey": "agentId"
                         },
                         {
                             "header": "hostname",
-                            "colKey": "hostname"
+                            "colKey": "hostName"
                         },                     
                         {
                             "header": "Output",
-                            "colKey": "Output"
+                            "colKey": "output"
                         }
                     ]}
                     data={results ? results : []}

@@ -55,6 +55,10 @@ export default function Scripts() {
                         "colKey": "Id"
                     },
                     {
+                        "header": "Title",
+                        "colKey": "title"
+                    },
+                    {
                         "header": "Platform",
                         "colKey": "Platform"
                     },

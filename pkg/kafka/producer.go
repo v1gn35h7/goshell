@@ -43,12 +43,19 @@ func NewProducer(conf kafka.ConfigMap, logger zerologr.Logger) *producer {
 }
 
 func (prodcr *producer) Create(topic string, record []byte) {
-	prodcr.Instance.Produce(&kafka.Message{
+	err := prodcr.Instance.Produce(&kafka.Message{
 		TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
 		Key:            record,
 		Value:          record,
 	}, nil)
 
-	prodcr.Instance.Flush(1 * 1000)
-	prodcr.Instance.Close()
+	if err != nil {
+		prodcr.logger.Error(err, "Error writing to kafka")
+	}
+
+}
+
+func (prdcr *producer) Close() {
+	prdcr.Instance.Flush(1 * 1000)
+	prdcr.Instance.Close()
 }

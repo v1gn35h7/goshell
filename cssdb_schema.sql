@@ -27,10 +27,12 @@ CREATE TABLE goshell.assets (
     AND speculative_retry = '99p';
 
 CREATE TABLE goshell.results (
-    agentid text PRIMARY KEY,
+    id text PRIMARY KEY,
+    agentid text,
     hostname text,
     output text,
-    scriptid text
+    scriptid text,
+    score text
 ) WITH additional_write_policy = '99p'
     AND bloom_filter_fp_chance = 0.01
     AND caching = {'keys': 'ALL', 'rows_per_partition': 'NONE'}

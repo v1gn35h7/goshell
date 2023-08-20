@@ -14,7 +14,7 @@ export default function ScriptNew(){
     const submit = () => {
         toast.promise(
             saveScript({
-                scrip: title,
+                title: title,
                 platform: platform,
                 executionTime: executionTime,
                 executionFrequency: executionFrequency, 
@@ -50,7 +50,7 @@ export default function ScriptNew(){
             <div class="flex flex-row mt-10">
                 <div class="basis-3/4">
                     <select type="text" class="form-input w-full" placeholder="Script Platform" required onChange={(e) => {
-                        setPlatform(e.target.value)
+                        setPlatform(e.value)
                     }}>
                         <option selected>Windows</option>
                         <option>Linux</option>

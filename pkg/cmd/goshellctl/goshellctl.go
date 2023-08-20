@@ -77,4 +77,6 @@ func readConfig(configPath string) {
 		// Handle errors reading the config file
 		panic(fmt.Errorf("fatal error config file: %w", err))
 	}
+	fmt.Println(viper.AllSettings())
+
 }

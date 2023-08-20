@@ -43,10 +43,11 @@ func (srvc service) SaveScripts(scriptPayload goshell.Script) (bool, error) {
 func (srvc service) SendFragment(fragment goshell.Fragment) (int32, error) {
 	kafkaConfig := make(map[string]kafka.ConfigValue)
 	kafkaConfig["bootstrap.servers"] = viper.GetString("kafka.bootstrapServers")
+	kafkaConfig["acks"] = "all"
 
 	kafkaProducer := intKafka.NewProducer(kafkaConfig, logging.Logger())
 
-	resultsTopic := viper.GetString("kafka.results.producer.topic")
+	resultsTopic := viper.GetString("kafka.producers.results.topic")
 
 	// Produce some records in transaction
 	for _, output := range fragment.Outputs {
@@ -57,6 +58,9 @@ func (srvc service) SendFragment(fragment goshell.Fragment) (int32, error) {
 		}
 		kafkaProducer.Create(resultsTopic, record)
 	}
+
+	// Close the producer
+	kafkaProducer.Close()
 
 	return int32(1), nil
 }

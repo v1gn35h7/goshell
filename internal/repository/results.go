@@ -22,7 +22,7 @@ func ResultsRepository(logr zerologr.Logger) *resultsRepository {
 		recipes.CRUD{ // Here we didn't replace, but rather wrapped the table object in our recipe, effectively adding more methods to the end API
 			TableInterface: Base().NewTable(
 				"results",        // The table name
-				[]string{},       // Row keys
+				[]string{"id"},   // Row keys
 				nil,              // Range keys
 				goshell.Output{}, // We pass an instance of the asset struct that will be used as a type template during fetches.
 			),
@@ -45,7 +45,7 @@ func (rep *resultsRepository) AddResults(output goshell.Output) {
 	err := rep.resultsTable.Insert(output)
 
 	if err != nil {
-		rep.logger.Error(err, "Failed to insert event ")
+		rep.logger.Error(err, "Failed to insert output")
 	}
 
 	rep.logger.Info("Output added to cass")

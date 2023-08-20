@@ -45,9 +45,9 @@ func makeSendFragmentEndpoint(srvc service.Service) endpoint.Endpoint {
 
 		for _, op := range req.Outputs {
 			otp := goshell.Output{
-				AgentId:  op.AgentId,
-				HostName: op.HostName,
-				ScriptId: op.ScriptId,
+				Agentid:  op.AgentId,
+				Hostname: op.HostName,
+				Scriptid: op.ScriptId,
 				Output:   op.Output,
 			}
 			payload.Outputs = append(payload.Outputs, otp)
