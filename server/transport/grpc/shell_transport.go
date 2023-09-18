@@ -15,6 +15,7 @@ type GetScriptRequest struct {
 	Platform        string `protobuf:"bytes,2,opt,name=Platform,proto3" json:"Platform,omitempty"`
 	OperatingSystem string `protobuf:"bytes,3,opt,name=OperatingSystem,proto3" json:"OperatingSystem,omitempty"`
 	Architecture    string `protobuf:"bytes,4,opt,name=Architecture,proto3" json:"Architecture,omitempty"`
+	Frequency       string `protobuf:"bytes,4,opt,name=Frequency,proto3" json:"Frequency,omitempty"`
 }
 
 type GetScriptResponse struct {
@@ -83,9 +84,11 @@ func encodeGetScriptsResponse(_ context.Context, response interface{}) (interfac
 	scripts := make([]*pb.ShellScript, 0)
 	for _, v := range resp.Scripts {
 		scripts = append(scripts, &pb.ShellScript{
-			Script: v.Script,
-			Args:   "",
-			Type:   v.Type,
+			Script:    v.Script,
+			Args:      "tt",
+			Type:      "S",
+			Frequency: v.Frequency,
+			Id:        v.Id,
 		})
 	}
 	return &pb.ShellResponse{Scripts: scripts}, nil

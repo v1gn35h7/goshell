@@ -5,9 +5,8 @@ import { Link, useNavigate } from "react-router-dom";
 
 export default function ScriptNew(){
     const [title, setTitle] = useState("");
-    const [platform, setPlatform] = useState("");
-    const [executionFrequency, setExecutionFrequency] = useState("");
-    const [executionTime, setExecutionTime] = useState("");
+    const [platform, setPlatform] = useState("Windows");
+    const [frequency, setFrequency] = useState("* * * * *");
     const [script, setScript] = useState("");
     const navigate = useNavigate();
 
@@ -16,8 +15,7 @@ export default function ScriptNew(){
             saveScript({
                 title: title,
                 platform: platform,
-                executionTime: executionTime,
-                executionFrequency: executionFrequency, 
+                frequency: frequency,
                 script: script
             }),
             {
@@ -56,25 +54,16 @@ export default function ScriptNew(){
                         <option>Linux</option>
                         <option>Darwin</option>
                     </select>
-                </div>     
+                </div> 
                 <div class="basis-3/4">
-                    <select type="text" class="form-input w-full" placeholder="Execution Frequency" required onChange={(e) => {
-                        setExecutionFrequency(e.target.value)
-                    }}>
-                        <option selected>Daily</option>
-                        <option>Weekly</option>
-                        <option>Monthly</option>
-                    </select>
-                </div>
-                <div class="basis-3/4">
-                    <input type="time" class="form-textarea w-full" required onChange={(e) => {
-                        setExecutionTime(e.target.value)
+                    <input type="text" class="form-textarea w-full" placeholder="Frequency (Ex: * * * * *)" required onChange={(e) => {
+                        setFrequency(e.target.value)
                     }} />
                 </div>               
             </div>
             <div class="flex flex-row mt-10">
                 <div class="w-full">
-                    <textarea type="text" class="form-textarea w-full" placeholder="Enter Script ..." required  onChange={(e) => {
+                    <textarea type="text" class="form-textarea w-full" style={{height: "300px"}} placeholder="Enter Script ..." required  onChange={(e) => {
                         setScript(e.target.value)
                     }} />
                 </div>               

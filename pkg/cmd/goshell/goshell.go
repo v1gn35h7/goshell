@@ -80,7 +80,7 @@ func bootStrapServer() {
 	config.ReadConfig(configPath, logging.Logger())
 
 	// Init database
-	cassdb.SetUpSession()
+	cassdb.SetUpSession(logging.Logger())
 
 	//Mertics setup
 	fieldKeys := []string{"method", "error"}

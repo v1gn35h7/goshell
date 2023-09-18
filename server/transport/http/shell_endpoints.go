@@ -49,10 +49,11 @@ func makeSaveScriptEndpoint(srvc service.Service) endpoint.Endpoint {
 	return func(_ context.Context, request interface{}) (interface{}, error) {
 		req := request.(saveScriptEndpointRequest)
 		script := goshell.Script{
-			Title:    req.Title,
-			Platform: req.Platform,
-			Type:     req.Type,
-			Script:   req.Script,
+			Title:     req.Title,
+			Platform:  req.Platform,
+			Type:      req.Type,
+			Script:    req.Script,
+			Frequency: req.Frequency,
 		}
 		res, err := srvc.SaveScripts(script)
 		status := "SUCCESS"

@@ -40,10 +40,11 @@ type connectToEndpointResponse struct {
 }
 
 type saveScriptEndpointRequest struct {
-	Title    string
-	Script   string
-	Platform string
-	Type     string
+	Title     string
+	Script    string
+	Platform  string `json:"platform"`
+	Type      string
+	Frequency string `json:"frequency"`
 }
 
 type saveScriptEndpointResponse struct {

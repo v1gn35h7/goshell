@@ -50,7 +50,11 @@ export default function Search(){
                         {
                             "header": "hostname",
                             "colKey": "hostName"
-                        },                     
+                        },    
+                        {
+                            "header": "Score",
+                            "colKey": "Score"
+                        },                 
                         {
                             "header": "Output",
                             "colKey": "output"

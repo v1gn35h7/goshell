@@ -18,7 +18,7 @@ func NewStartCommand() *cobra.Command {
 			logger.Info("Logger initated...")
 
 			// Init database
-			cassdb.SetUpSession()
+			cassdb.SetUpSession(logger)
 
 			goshellCtlSrvc := service.NewService(logger)
 			started, err := goshellCtlSrvc.StartService()

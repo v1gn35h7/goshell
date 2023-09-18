@@ -63,8 +63,8 @@ export default function Scripts() {
                         "colKey": "Platform"
                     },
                     {
-                        "header": "Type",
-                        "colKey": "Type"
+                        "header": "Frequency",
+                        "colKey": "Frequency"
                     },
                     {
                         "header": "Actions",

@@ -1,12 +1,16 @@
 package service
 
 import (
+	"bytes"
+	"context"
 	"encoding/json"
+	"log"
 
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/google/uuid"
 	"github.com/spf13/viper"
 	respository "github.com/v1gn35h7/goshell/internal/repository"
+	"github.com/v1gn35h7/goshell/pkg/elastic"
 	"github.com/v1gn35h7/goshell/pkg/goshell"
 	intKafka "github.com/v1gn35h7/goshell/pkg/kafka"
 	"github.com/v1gn35h7/goshell/pkg/logging"
@@ -66,5 +70,72 @@ func (srvc service) SendFragment(fragment goshell.Fragment) (int32, error) {
 }
 
 func (srvc service) SearchResults(query string) ([]*goshell.Output, error) {
-	return respository.ResultsRepository(logging.Logger()).SearchResults(query)
+	data := make([]*goshell.Output, 0)
+	client := elastic.NewElasticClient(logging.Logger())
+	// Build the request body.
+	var buf bytes.Buffer
+	esquery := map[string]interface{}{
+		"query": map[string]interface{}{
+			"match": map[string]interface{}{
+				"output": query,
+			},
+		},
+	}
+	if err := json.NewEncoder(&buf).Encode(esquery); err != nil {
+		log.Printf("Error encoding query: %s", err)
+	}
+
+	// Perform the search request.
+	res, err := client.Search(
+		client.Search.WithContext(context.Background()),
+		client.Search.WithIndex("result*"),
+		client.Search.WithBody(&buf),
+		client.Search.WithTrackTotalHits(true),
+		client.Search.WithPretty(),
+	)
+
+	if err != nil {
+		log.Printf("Error getting response: %s", err)
+	}
+	defer res.Body.Close()
+
+	if res.IsError() {
+		var e map[string]interface{}
+		if err := json.NewDecoder(res.Body).Decode(&e); err != nil {
+			log.Fatalf("Error parsing the response body: %s", err)
+		} else {
+			// Print the response status and error information.
+			log.Printf("[%s] %s: %s",
+				res.Status(),
+				e["error"].(map[string]interface{})["type"],
+				e["error"].(map[string]interface{})["reason"],
+			)
+		}
+	}
+
+	var r map[string]interface{}
+	if err := json.NewDecoder(res.Body).Decode(&r); err != nil {
+		log.Printf("Error parsing the response body: %s", err)
+	}
+	// Print the response status, number of results, and request duration.
+	log.Printf(
+		"[%s] %d hits; took: %dms",
+		res.Status(),
+		int(r["hits"].(map[string]interface{})["total"].(map[string]interface{})["value"].(float64)),
+		int(r["took"].(float64)),
+	)
+	// Print the ID and document source for each hit.
+	for _, hit := range r["hits"].(map[string]interface{})["hits"].([]interface{}) {
+		output := &goshell.Output{
+			Id:       hit.(map[string]interface{})["_id"].(string),
+			Agentid:  "--",
+			Hostname: "--",
+			Scriptid: "--",
+			Output:   hit.(map[string]interface{})["_source"].(map[string]interface{})["output"].(string),
+			Score:    hit.(map[string]interface{})["_source"].(map[string]interface{})["score"].(string),
+		}
+		data = append(data, output)
+	}
+
+	return data, nil
 }
