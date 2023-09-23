@@ -3,6 +3,7 @@ module github.com/v1gn35h7/goshell
 go 1.19
 
 require (
+	github.com/eapache/go-resiliency v1.4.0
 	github.com/elastic/go-elasticsearch/v7 v7.17.10
 	github.com/go-kit/kit v0.12.0
 	github.com/go-kit/log v0.2.0

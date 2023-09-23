@@ -1,0 +1,13 @@
+goindexer:
+  version: "0.0.1-SNAPSHOT-1" 
+
+
+kafka:
+  bootstrapServers: "kafka1:9092,kafka2:9093"
+  consumers:
+    -
+      topic: "trooper-cep-results"
+
+elasticsearch:
+  hosts: ""
+  maxRetry: 3
