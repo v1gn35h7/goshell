@@ -23,25 +23,25 @@ type shellService interface {
 	SearchResults(query string) ([]*goshell.Output, error)
 }
 
-func (srvc service) ExecuteCmd(cmd string) (string, error) {
+func (s service) ExecuteCmd(cmd string) (string, error) {
 	return "ellow!!", nil
 }
 
-func (srvc service) ConnectToRemoteHost(hostId string) (bool, error) {
+func (s service) ConnectToRemoteHost(hostId string) (bool, error) {
 	return true, nil
 }
 
-func (srvc service) GetScripts(asset goshell.Asset) ([]*goshell.Script, error) {
-	respository.AssetsRepository(logging.Logger()).UpdateAsset(asset)
-	return respository.ScriptsRepository(logging.Logger()).GetScripts(asset.Agentid)
+func (s service) GetScripts(asset goshell.Asset) ([]*goshell.Script, error) {
+	respository.AssetsRepository(logging.Logger()).Update(asset)
+	return respository.ScriptsRepository(logging.Logger()).List(asset.Agentid)
 }
 
-func (srvc service) SaveScripts(scriptPayload goshell.Script) (bool, error) {
+func (s service) SaveScripts(scriptPayload goshell.Script) (bool, error) {
 	scriptPayload.Id = uuid.NewString()
-	return respository.ScriptsRepository(logging.Logger()).AddScripts(scriptPayload)
+	return respository.ScriptsRepository(logging.Logger()).Save(scriptPayload)
 }
 
-func (srvc service) SendFragment(fragment goshell.Fragment) (int32, error) {
+func (s service) SendFragment(fragment goshell.Fragment) (int32, error) {
 	kafkaConfig := make(map[string]kafka.ConfigValue)
 	kafkaConfig["bootstrap.servers"] = viper.GetString("kafka.bootstrapServers")
 	kafkaConfig["acks"] = "all"
@@ -55,7 +55,7 @@ func (srvc service) SendFragment(fragment goshell.Fragment) (int32, error) {
 		record, er := json.Marshal(output)
 
 		if er != nil {
-			srvc.logger.Log("Error", "Filed while serializing", "er", er)
+			s.logger.Log("Error", "Filed while serializing", "er", er)
 		}
 		kafkaProducer.Create(resultsTopic, record)
 	}
@@ -66,7 +66,7 @@ func (srvc service) SendFragment(fragment goshell.Fragment) (int32, error) {
 	return int32(1), nil
 }
 
-func (srvc service) SearchResults(query string) ([]*goshell.Output, error) {
+func (s service) SearchResults(query string) ([]*goshell.Output, error) {
 	data := make([]*goshell.Output, 0)
 	client := elastic.NewClient(logging.Logger())
 

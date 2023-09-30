@@ -7,20 +7,20 @@ import (
 	"github.com/v1gn35h7/goshell/server/goshell"
 )
 
-func (middelware LoggingServiceMiddleware) GetUsers() ([]*gomodel.Asset, error) {
+func (m LoggingMiddleware) GetUsers() ([]*gomodel.Asset, error) {
 	defer func(tm time.Time) {
-		middelware.logger.Log("Method", "GetUsers",
+		m.logger.Log("Method", "GetUsers",
 			"Time Since", time.Since(tm))
 	}(time.Now())
 
-	return middelware.next.GetUsers()
+	return m.next.GetUsers()
 }
 
-func (middelware LoggingServiceMiddleware) AddUser(user goshell.User) (string, error) {
+func (m LoggingMiddleware) AddUser(user goshell.User) (string, error) {
 	defer func(tm time.Time) {
-		middelware.logger.Log("Method", "AddUser",
+		m.logger.Log("Method", "AddUser",
 			"Time Since", time.Since(tm))
 	}(time.Now())
 
-	return middelware.next.AddUser(user)
+	return m.next.AddUser(user)
 }

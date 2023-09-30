@@ -10,6 +10,6 @@ type assetService interface {
 	GetAssets() ([]*goshell.Asset, error)
 }
 
-func (srvc service) GetAssets() ([]*goshell.Asset, error) {
-	return respository.AssetsRepository(logging.Logger()).GetAssets("")
+func (s service) GetAssets() ([]*goshell.Asset, error) {
+	return respository.AssetsRepository(logging.Logger()).List("")
 }

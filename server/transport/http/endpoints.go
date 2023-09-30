@@ -6,7 +6,7 @@ import (
 	"github.com/v1gn35h7/goshell/server/service"
 )
 
-type shellEndpoints struct {
+type goshellEndpoints struct {
 	executeCmdEndpoint    endpoint.Endpoint
 	connectToHostEndpoint endpoint.Endpoint
 	getAssetsEndpoint     endpoint.Endpoint
@@ -17,8 +17,8 @@ type shellEndpoints struct {
 	searchResultsEndpoint endpoint.Endpoint
 }
 
-func MakeEndpoints(srvc service.Service, logger log.Logger) shellEndpoints {
-	endpoints := shellEndpoints{
+func MakeEndpoints(srvc service.Service, logger log.Logger) goshellEndpoints {
+	endpoints := goshellEndpoints{
 		// Shell
 		executeCmdEndpoint: makeExecuteCmdEndpointMiddleware(srvc, logger),
 

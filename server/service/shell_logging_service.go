@@ -6,56 +6,56 @@ import (
 	"github.com/v1gn35h7/goshell/pkg/goshell"
 )
 
-func (middelware LoggingServiceMiddleware) ExecuteCmd(cmd string) (string, error) {
+func (m LoggingMiddleware) ExecuteCmd(cmd string) (string, error) {
 	defer func(tm time.Time) {
-		middelware.logger.Log("Method", "ExecuteCmd",
+		m.logger.Log("Method", "ExecuteCmd",
 			"Time Since", time.Since(tm))
 	}(time.Now())
 
-	return middelware.next.ExecuteCmd(cmd)
+	return m.next.ExecuteCmd(cmd)
 }
 
-func (middelware LoggingServiceMiddleware) ConnectToRemoteHost(hostId string) (bool, error) {
+func (m LoggingMiddleware) ConnectToRemoteHost(hostId string) (bool, error) {
 	defer func(tm time.Time) {
-		middelware.logger.Log("Method", "ConnectToRemoteHost",
+		m.logger.Log("Method", "ConnectToRemoteHost",
 			"Time Since", time.Since(tm))
 	}(time.Now())
 
-	return middelware.next.ConnectToRemoteHost(hostId)
+	return m.next.ConnectToRemoteHost(hostId)
 }
 
-func (middelware LoggingServiceMiddleware) GetScripts(asset goshell.Asset) ([]*goshell.Script, error) {
+func (m LoggingMiddleware) GetScripts(asset goshell.Asset) ([]*goshell.Script, error) {
 	defer func(tm time.Time) {
-		middelware.logger.Log("Method", "GetScripts",
+		m.logger.Log("Method", "GetScripts",
 			"Time Since", time.Since(tm))
 	}(time.Now())
 
-	return middelware.next.GetScripts(asset)
+	return m.next.GetScripts(asset)
 }
 
-func (middelware LoggingServiceMiddleware) SaveScripts(script goshell.Script) (bool, error) {
+func (m LoggingMiddleware) SaveScripts(script goshell.Script) (bool, error) {
 	defer func(tm time.Time) {
-		middelware.logger.Log("Method", "SaveScripts",
+		m.logger.Log("Method", "SaveScripts",
 			"Time Since", time.Since(tm))
 	}(time.Now())
 
-	return middelware.next.SaveScripts(script)
+	return m.next.SaveScripts(script)
 }
 
-func (middelware LoggingServiceMiddleware) SendFragment(payload goshell.Fragment) (int32, error) {
+func (m LoggingMiddleware) SendFragment(payload goshell.Fragment) (int32, error) {
 	defer func(tm time.Time) {
-		middelware.logger.Log("Method", "SendFragment",
+		m.logger.Log("Method", "SendFragment",
 			"Time Since", time.Since(tm))
 	}(time.Now())
 
-	return middelware.next.SendFragment(payload)
+	return m.next.SendFragment(payload)
 }
 
-func (middelware LoggingServiceMiddleware) SearchResults(query string) ([]*goshell.Output, error) {
+func (m LoggingMiddleware) SearchResults(query string) ([]*goshell.Output, error) {
 	defer func(tm time.Time) {
-		middelware.logger.Log("Method", "Search Results",
+		m.logger.Log("Method", "Search Results",
 			"Time Since", time.Since(tm))
 	}(time.Now())
 
-	return middelware.next.SearchResults(query)
+	return m.next.SearchResults(query)
 }

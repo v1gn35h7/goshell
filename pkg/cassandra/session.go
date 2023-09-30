@@ -1,4 +1,4 @@
-package cassdb
+package cassandra
 
 import (
 	"strings"

@@ -1,7 +1,7 @@
 package goshell
 
 type User struct {
-	Id       string
+	ID       string
 	Username string
 	Password string
 }

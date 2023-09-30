@@ -72,7 +72,7 @@ func makeExecuteCmdTransport(endpoint endpoint.Endpoint) http.Handler {
 	return httptransport.NewServer(
 		endpoint,
 		decodeExecuteCmdRequest,
-		encodeExecuteCmdRequest,
+		encodeResponse,
 		httpSrvOptions...,
 	)
 }
@@ -81,7 +81,7 @@ func makeConnectToHostEndpointTransport(endpoint endpoint.Endpoint) http.Handler
 	return httptransport.NewServer(
 		endpoint,
 		decodeConnectToEndpointRequest,
-		encodeConnectToEndpointResponse,
+		encodeResponse,
 		httpSrvOptions...,
 	)
 }
@@ -90,7 +90,7 @@ func makeSaveScriptEndpointTransport(endpoint endpoint.Endpoint) http.Handler {
 	return httptransport.NewServer(
 		endpoint,
 		decodeSaveScriptEndpointRequest,
-		encodeSaveScriptEndpointResponse,
+		encodeResponse,
 		httpSrvOptions...,
 	)
 }
@@ -99,7 +99,7 @@ func makeGetScriptEndpointTransport(endpoint endpoint.Endpoint) http.Handler {
 	return httptransport.NewServer(
 		endpoint,
 		decodeConnectToEndpointRequest,
-		encodeSaveScriptEndpointResponse,
+		encodeResponse,
 		httpSrvOptions...,
 	)
 }
@@ -108,7 +108,7 @@ func makeSearchResultsEndpointTransport(endpoint endpoint.Endpoint) http.Handler
 	return httptransport.NewServer(
 		endpoint,
 		decodeSearchResultsRequest,
-		encodeEndpointResponse,
+		encodeResponse,
 		httpSrvOptions...,
 	)
 }
@@ -125,10 +125,6 @@ func decodeExecuteCmdRequest(ctx context.Context, request *http.Request) (interf
 	return req, nil
 }
 
-func encodeExecuteCmdRequest(ctx context.Context, w http.ResponseWriter, response interface{}) error {
-	return json.NewEncoder(w).Encode(response)
-}
-
 func decodeConnectToEndpointRequest(ctx context.Context, request *http.Request) (interface{}, error) {
 
 	req := connectToEndpointRequest{
@@ -136,10 +132,6 @@ func decodeConnectToEndpointRequest(ctx context.Context, request *http.Request) 
 	}
 
 	return req, nil
-}
-
-func encodeConnectToEndpointResponse(ctx context.Context, w http.ResponseWriter, response interface{}) error {
-	return json.NewEncoder(w).Encode(response)
 }
 
 func decodeSaveScriptEndpointRequest(ctx context.Context, request *http.Request) (interface{}, error) {
@@ -151,21 +143,10 @@ func decodeSaveScriptEndpointRequest(ctx context.Context, request *http.Request)
 	return req, nil
 }
 
-func encodeSaveScriptEndpointResponse(ctx context.Context, w http.ResponseWriter, response interface{}) error {
-	return json.NewEncoder(w).Encode(response)
-}
-
 func decodeSearchResultsRequest(ctx context.Context, request *http.Request) (interface{}, error) {
 	req := searchResultsRequest{
 		Query: request.URL.Query().Get("query"),
 	}
 
 	return req, nil
-}
-
-// *****************************
-// Common
-// ++++++++++++++++++++++++++++*
-func encodeEndpointResponse(ctx context.Context, w http.ResponseWriter, response interface{}) error {
-	return json.NewEncoder(w).Encode(response)
 }

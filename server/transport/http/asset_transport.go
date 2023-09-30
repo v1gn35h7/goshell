@@ -2,7 +2,6 @@ package http
 
 import (
 	"context"
-	"encoding/json"
 	"net/http"
 
 	"github.com/go-kit/kit/endpoint"
@@ -25,7 +24,7 @@ func getAssetsEnpointTransport(endpoint endpoint.Endpoint) http.Handler {
 	return httptransport.NewServer(
 		endpoint,
 		decodeGetAssetsRequest,
-		encodeGetAssetsResponse,
+		encodeResponse,
 	)
 }
 
@@ -36,8 +35,4 @@ func decodeGetAssetsRequest(ctx context.Context, request *http.Request) (interfa
 	}
 
 	return req, nil
-}
-
-func encodeGetAssetsResponse(ctx context.Context, w http.ResponseWriter, response interface{}) error {
-	return json.NewEncoder(w).Encode(response)
 }

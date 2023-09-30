@@ -36,31 +36,31 @@ func ResultsRepository(logr zerologr.Logger) *resultsRepository {
 
 }
 
-func (rep *resultsRepository) AddResults(output goshell.Output) {
+func (r *resultsRepository) Save(output goshell.Output) {
 	defer func() {
 		if ok := recover(); ok != nil {
-			rep.logger.Info("System Paniced", "rec:", ok)
+			r.logger.Info("System Paniced", "rec:", ok)
 		}
 	}()
-	err := rep.resultsTable.Insert(output)
+	err := r.resultsTable.Insert(output)
 
 	if err != nil {
-		rep.logger.Error(err, "Failed to insert output")
+		r.logger.Error(err, "Failed to insert output")
 	}
 
-	rep.logger.Info("Output added to cass")
+	r.logger.Info("Output added to cass")
 }
 
-func (rep *resultsRepository) SearchResults(query string) ([]*goshell.Output, error) {
+func (r *resultsRepository) Find(query string) ([]*goshell.Output, error) {
 	defer func() {
 		if ok := recover(); ok != nil {
-			rep.logger.Info("System Paniced", "rec:", ok)
+			r.logger.Info("System Paniced", "rec:", ok)
 		}
 	}()
-	list, err := rep.resultsTable.List()
+	list, err := r.resultsTable.List()
 
 	if err != nil {
-		rep.logger.Error(err, "Failed to search results...")
+		r.logger.Error(err, "Failed to search results...")
 		return nil, err
 	}
 
@@ -68,7 +68,7 @@ func (rep *resultsRepository) SearchResults(query string) ([]*goshell.Output, er
 
 	msg := fmt.Sprintf("Found %d results", len(results))
 
-	rep.logger.Info(msg)
+	r.logger.Info(msg)
 
 	return results, nil
 }

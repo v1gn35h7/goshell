@@ -18,7 +18,7 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"github.com/v1gn35h7/goshell/internal/config"
-	"github.com/v1gn35h7/goshell/internal/datastore/cassdb"
+	"github.com/v1gn35h7/goshell/pkg/cassandra"
 	"github.com/v1gn35h7/goshell/pkg/logging"
 	"github.com/v1gn35h7/goshell/server/pb"
 	"github.com/v1gn35h7/goshell/server/service"
@@ -56,17 +56,17 @@ func printLogo() {
 	fmt.Println("#########################################################")
 	fmt.Println("                                                         ")
 	fmt.Println("                                                         ")
-	fmt.Println("        \"\"\"\"\"\"\"                   \"\"\"\"\"\"\"\"\"\"\"\"                ")
-	fmt.Println("       \"\"       \"\"                             \"\"    							")
-	fmt.Println("      \"\"                                         \"\"    ")
-	fmt.Println("      \"\"                                         \"\"     ")
-	fmt.Println("      \"\"                \"\"\"\"\"\"             \"\"     ")
-	fmt.Println("      \"\"                \"        \"             \"\"     ")
-	fmt.Println("      \"\"         \"\"   \"        \"             \"\"     ")
-	fmt.Println("       \"\"        \"\"   \"        \"             \"\"     ")
-	fmt.Println("         \"\"      \"\"   \"        \"             \"\"     ")
-	fmt.Println("           \"\"\"\"\"\"   \"\"\"\"\"\"             \"\"    ")
-	fmt.Println("                                                         ")
+	fmt.Println("        \"\"\"\"\"\"\"                  \"\"\"\"\"\"\"\"\"\"\"\"                ")
+	fmt.Println("       \"\"       \"\"                            \"\"    							")
+	fmt.Println("      \"\"                                        \"\"    ")
+	fmt.Println("      \"\"                                        \"\"     ")
+	fmt.Println("      \"\"                \"\"\"\"\"\"            \"\"     ")
+	fmt.Println("      \"\"                \"        \"            \"\"     ")
+	fmt.Println("      \"\"         \"\"   \"        \"            \"\"     ")
+	fmt.Println("       \"\"        \"\"   \"        \"            \"\"     ")
+	fmt.Println("         \"\"      \"\"   \"        \"            \"\"     ")
+	fmt.Println("           \"\"\"\"\"\"   \"\"\"\"\"\"            \"\"    ")
+	fmt.Println("                                                          ")
 	fmt.Println("                                                         ")
 	fmt.Println("#########################################################")
 }
@@ -77,10 +77,10 @@ func bootStrapServer() {
 
 	// Init read config
 	fmt.Println("Config path set to: ", configPath)
-	config.ReadConfig(configPath, logging.Logger())
+	config.Read(configPath, logging.Logger())
 
 	// Init database
-	cassdb.SetUpSession(logging.Logger())
+	cassandra.SetUpSession(logging.Logger())
 
 	//Mertics setup
 	fieldKeys := []string{"method", "error"}
@@ -99,8 +99,8 @@ func bootStrapServer() {
 
 	// goShell Service init
 	srvc := service.New(logger)
-	serviceLoggingMiddleware := service.NewLoggingServiceMiddleware(logger, srvc)
-	serviceInstrumentationMiddleware := service.NewInstrumentationServiceMiddleware(requestCount, requestLatency, serviceLoggingMiddleware)
+	serviceLoggingMiddleware := service.NewLoggingMiddleware(logger, srvc)
+	serviceInstrumentationMiddleware := service.NewInstrumentationMiddleware(requestCount, requestLatency, serviceLoggingMiddleware)
 
 	// Mux Routes
 	r := httptransport.MakeHandlers(serviceInstrumentationMiddleware, logger)
@@ -108,7 +108,7 @@ func bootStrapServer() {
 	port := viper.GetString("goshell.server.port")
 
 	// Start Server
-	srv := &http.Server{
+	httpServer := &http.Server{
 		Handler: r,
 		Addr:    "127.0.0.1:" + port,
 		// Good practice: enforce timeouts for servers you create!
@@ -128,14 +128,14 @@ func bootStrapServer() {
 		// }
 		g.Add(func() error {
 			logger.Log("transport", "HTTP", "addr", "localhost:8080")
-			return srv.ListenAndServe()
-		}, func(error) {
-			//httpListener.Close()
+			return httpServer.ListenAndServe()
+		}, func(er error) {
+			httpServer.Close()
 		})
 	}
 	{
 		// Start gRPC server
-		grpcServer := grpctransport.NewGRPCServer(grpctransport.MakeGrpcEndpoints(srvc, logger))
+		grpcServer := grpctransport.NewServer(grpctransport.MakeGrpcEndpoints(srvc, logger))
 		// The gRPC listener mounts the Go kit gRPC server we created.
 		grpcListener, err := net.Listen("tcp", "localhost:8082")
 		if err != nil {
@@ -171,5 +171,4 @@ func bootStrapServer() {
 		})
 	}
 	logger.Log("exit", g.Run())
-
 }

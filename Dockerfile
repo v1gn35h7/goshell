@@ -21,4 +21,4 @@ COPY --from=build-stage /goshell /goshell
 EXPOSE 8080
 EXPOSE 8082
 
-ENTRYPOINT ["/goshell", "start", "--configPath=../../configs/goshell"]
+ENTRYPOINT ["/goshell", "start", "--configPath=/etc/goshell/configs/goshell"]

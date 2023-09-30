@@ -33,18 +33,18 @@ func EventRepository(logr zerologr.Logger) *eventRepository {
 	}
 }
 
-func (rep *eventRepository) AddEvents(event goshell.Events) {
+func (r *eventRepository) Save(event goshell.Events) {
 	defer func() {
 		if ok := recover(); ok != nil {
-			rep.logger.Info("System Paniced", "rec:", ok)
+			r.logger.Info("System Paniced", "rec:", ok)
 		}
 	}()
-	err := rep.eventTable.Insert(event)
+	err := r.eventTable.Insert(event)
 
 	if err != nil {
-		rep.logger.Error(err, "Failed to insert event ")
+		r.logger.Error(err, "Failed to insert event ")
 	}
 
-	rep.logger.Info("Event added to cass")
+	r.logger.Info("Event added to cass")
 	panic("test")
 }

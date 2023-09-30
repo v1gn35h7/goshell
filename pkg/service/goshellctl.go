@@ -19,8 +19,8 @@ import (
 )
 
 type Service struct {
-	logger       zerologr.Logger
-	srvcInstance *Service
+	logger    zerologr.Logger
+	sInstance *Service
 }
 
 func NewService(logr zerologr.Logger) *Service {
@@ -29,8 +29,8 @@ func NewService(logr zerologr.Logger) *Service {
 	}
 }
 
-func (srvc *Service) StartService() (bool, error) {
-	srvc.logger.Info("Starting GoshellCtl service...")
+func (s *Service) StartService() (bool, error) {
+	s.logger.Info("Starting GoshellCtl service...")
 
 	kconfig := getClientConfig()
 
@@ -61,17 +61,17 @@ func (srvc *Service) StartService() (bool, error) {
 		go func(index int, ctx context.Context) {
 			defer wg.Done()
 			// consumerName := "consumer-" + strconv.Itoa(index)
-			// kafka.StartKafkaConsumer(ctx, consumerName, srvc.logger, kconfig, kproducers, "trooper-scripts-results")
+			// kafka.StartKafkaConsumer(ctx, consumerName, s.logger, kconfig, kproducers, "trooper-scripts-results")
 			consumer, err := kafka.NewConsumer(&kconfig)
 
 			if err != nil {
-				srvc.logger.Error(err, "Error starting the consumer", "consumerId:", i)
+				s.logger.Error(err, "Error starting the consumer", "consumerId:", i)
 			}
 
 			err = consumer.SubscribeTopics([]string{resultsTopic}, nil)
 
 			if err != nil {
-				srvc.logger.Error(err, "Error subscribing to topic")
+				s.logger.Error(err, "Error subscribing to topic")
 				os.Exit(1)
 			}
 
@@ -80,26 +80,26 @@ func (srvc *Service) StartService() (bool, error) {
 			for run {
 				select {
 				case sig := <-sigchan:
-					srvc.logger.Info("Msg", "Caught signal terminating", "SIgnal", sig)
+					s.logger.Info("Msg", "Caught signal terminating", "SIgnal", sig)
 					run = false
 				default:
 					record, err := consumer.ReadMessage(10000 * time.Millisecond)
 					if err != nil {
 						// Errors are informational and automatically handled by the consumer
-						srvc.logger.Error(err, "Failed to read message from kafka")
+						s.logger.Error(err, "Failed to read message from kafka")
 						continue
 					}
 					output := goshell.Output{}
 					err = json.Unmarshal(record.Value, &output)
 					if err != nil {
-						srvc.logger.Error(err, "Failed to unmarshal kafka paylod")
+						s.logger.Error(err, "Failed to unmarshal kafka paylod")
 					}
 					fmt.Printf("Consumed event from topic %s: key = %-10s value = %s\n",
 						*record.TopicPartition.Topic, string(record.Key), output)
 
 					if output.Output != "" {
 						output.Id = uuid.NewString()
-						respository.ResultsRepository(srvc.logger).AddResults(output)
+						respository.ResultsRepository(s.logger).Save(output)
 					}
 
 				}

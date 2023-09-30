@@ -3,6 +3,7 @@ package http
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/go-kit/kit/log"
@@ -15,6 +16,12 @@ import (
 
 var (
 	httpSrvOptions []httptransport.ServerOption
+)
+
+var (
+	ErrInconsistentIDs = errors.New("inconsistent IDs")
+	ErrAlreadyExists   = errors.New("already exists")
+	ErrNotFound        = errors.New("not found")
 )
 
 func MakeHandlers(srvc service.Service, logger log.Logger) http.Handler {
@@ -34,13 +41,13 @@ func MakeHandlers(srvc service.Service, logger log.Logger) http.Handler {
 	r.Handle("/api/v1/scripts", makeSaveScriptEndpointTransport(e.saveScriptEndpoint)).Methods("POST").Name("save_script")
 	r.Handle("/api/v1/scripts", makeGetScriptEndpointTransport(e.getScriptsEndpoint)).Methods("GET").Name("get_scripts")
 	r.Handle("/api/v1/results", makeSearchResultsEndpointTransport(e.searchResultsEndpoint)).Methods("GET").Name("get_results")
-	r.PathPrefix("/debug/pprof/").Handler(http.DefaultServeMux)
+	r.PathPrefix("/pprof/").Handler(http.DefaultServeMux)
 	r.PathPrefix("/").Handler(MakeFrontEndHandler())
 
 	return r
 }
 
-// Common
+// Common response encoders
 func encodeResponse(ctx context.Context, w http.ResponseWriter, response interface{}) error {
 	return json.NewEncoder(w).Encode(response)
 }
@@ -57,13 +64,12 @@ func encodeError(_ context.Context, err error, w http.ResponseWriter) {
 }
 
 func codeFrom(err error) int {
-	// switch err {
-	// case ErrNotFound:
-	// 	return http.StatusNotFound
-	// case ErrAlreadyExists, ErrInconsistentIDs:
-	// 	return http.StatusBadRequest
-	// default:
-	// 	return http.StatusInternalServerError
-	// }
-	return http.StatusInternalServerError
+	switch err {
+	case ErrNotFound:
+		return http.StatusNotFound
+	case ErrAlreadyExists, ErrInconsistentIDs:
+		return http.StatusBadRequest
+	default:
+		return http.StatusInternalServerError
+	}
 }

@@ -8,7 +8,7 @@ import (
 	"github.com/v1gn35h7/goshell/pkg/constants"
 )
 
-func ReadConfig(configPath string, logger zerologr.Logger) {
+func Read(configPath string, logger zerologr.Logger) {
 	// Read config
 	logger.Info("Reading config from file", "confi_path", configPath)
 	viper.SetConfigName(constants.ConfigName) // name of config file (without extension)

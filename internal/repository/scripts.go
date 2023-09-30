@@ -34,40 +34,40 @@ func ScriptsRepository(logr zerologr.Logger) *scriptsRepository {
 
 }
 
-func (rep *scriptsRepository) AddScripts(script goshell.Script) (bool, error) {
+func (r *scriptsRepository) Save(script goshell.Script) (bool, error) {
 	defer func() {
 		if ok := recover(); ok != nil {
-			rep.logger.Info("System Paniced", "rec:", ok)
+			r.logger.Info("System Paniced", "rec:", ok)
 		}
 	}()
-	err := rep.scriptsTable.Insert(script)
+	err := r.scriptsTable.Insert(script)
 
 	if err != nil {
-		rep.logger.Error(err, "Failed to insert script ")
+		r.logger.Error(err, "Failed to insert script ")
 		return false, err
 	}
 
-	rep.logger.Info("Script added to cass")
+	r.logger.Info("Script added to cass")
 
 	return true, nil
 }
 
-func (rep *scriptsRepository) GetScripts(hostId string) ([]*goshell.Script, error) {
+func (r *scriptsRepository) List(hostId string) ([]*goshell.Script, error) {
 	defer func() {
 		if ok := recover(); ok != nil {
-			rep.logger.Info("System Paniced", "rec:", ok)
+			r.logger.Info("System Paniced", "rec:", ok)
 		}
 	}()
-	list, err := rep.scriptsTable.List()
+	list, err := r.scriptsTable.List()
 
 	if err != nil {
-		rep.logger.Error(err, "Failed to insert script ")
+		r.logger.Error(err, "Failed to insert script ")
 		return nil, err
 	}
 
 	scripts := list.([]*goshell.Script)
 
-	rep.logger.Info("Script added to cass")
+	r.logger.Info("Script added to cass")
 
 	return scripts, nil
 }

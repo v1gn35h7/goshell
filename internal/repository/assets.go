@@ -36,51 +36,50 @@ func AssetsRepository(logr zerologr.Logger) *assetsRepository {
 
 }
 
-func (rep *assetsRepository) UpdateAsset(asset goshell.Asset) (bool, error) {
+func (r *assetsRepository) Update(asset goshell.Asset) (bool, error) {
 	defer func() {
 		if ok := recover(); ok != nil {
-			rep.logger.Info("System Paniced", "rec:", ok)
+			r.logger.Info("System Paniced", "rec:", ok)
 		}
 	}()
 	asset.Synctime = time.Now().Format("Mon, 02 Jan 2006 15:04:05 MST")
 
-	_, err := rep.assetsTable.Get(asset.Agentid)
+	_, err := r.assetsTable.Get(asset.Agentid)
 	if err != nil {
-		err := rep.assetsTable.Insert(asset)
+		err := r.assetsTable.Insert(asset)
 		if err != nil {
-			rep.logger.Error(err, "Failed to insert asset ")
+			r.logger.Error(err, "Failed to insert asset ")
 			return false, err
 		}
 	} else {
-		err := rep.assetsTable.Update(asset)
+		err := r.assetsTable.Update(asset)
 
 		if err != nil {
-			rep.logger.Error(err, "Failed to update asset ")
+			r.logger.Error(err, "Failed to update asset ")
 			return false, err
 		}
 	}
 
-	rep.logger.Info("asset updated to cass")
-
+	r.logger.Info("asset updated to cass")
 	return true, nil
 }
 
-func (rep *assetsRepository) GetAssets(hostId string) ([]*goshell.Asset, error) {
+func (r *assetsRepository) List(hostId string) ([]*goshell.Asset, error) {
 	defer func() {
 		if ok := recover(); ok != nil {
-			rep.logger.Info("System Paniced", "rec:", ok)
+			r.logger.Info("System Paniced", "rec:", ok)
 		}
 	}()
-	list, err := rep.assetsTable.List()
+	list, err := r.assetsTable.List()
 
 	if err != nil {
-		rep.logger.Error(err, "Failed to get assets")
+		r.logger.Error(err, "Failed to get assets")
 		return nil, err
 	}
 
 	assets := list.([]*goshell.Asset)
 
-	rep.logger.Info("Assets fetched from cass")
+	r.logger.Info("Assets fetched from cass")
 
 	return assets, nil
 }

@@ -2,11 +2,11 @@ package service
 
 import "github.com/go-kit/log"
 
-type LoggingServiceMiddleware struct {
+type LoggingMiddleware struct {
 	logger log.Logger
 	next   Service
 }
 
-func NewLoggingServiceMiddleware(logger log.Logger, next Service) LoggingServiceMiddleware {
-	return LoggingServiceMiddleware{logger, next}
+func NewLoggingMiddleware(logger log.Logger, next Service) LoggingMiddleware {
+	return LoggingMiddleware{logger, next}
 }

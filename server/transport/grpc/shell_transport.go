@@ -37,7 +37,7 @@ type grpcServer struct {
 	pb.UnimplementedShellServiceServer
 }
 
-func NewGRPCServer(endpoints grpcEndpoints) *grpcServer {
+func NewServer(endpoints grpcEndpoints) *grpcServer {
 
 	return &grpcServer{
 		getScripts: grpctransport.NewServer(

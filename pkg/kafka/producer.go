@@ -42,20 +42,20 @@ func NewProducer(conf kafka.ConfigMap, logger zerologr.Logger) *producer {
 	}
 }
 
-func (prodcr *producer) Create(topic string, record []byte) {
-	err := prodcr.Instance.Produce(&kafka.Message{
+func (p *producer) Create(topic string, record []byte) {
+	err := p.Instance.Produce(&kafka.Message{
 		TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
 		Key:            record,
 		Value:          record,
 	}, nil)
 
 	if err != nil {
-		prodcr.logger.Error(err, "Error writing to kafka")
+		p.logger.Error(err, "Error writing to kafka")
 	}
 
 }
 
-func (prdcr *producer) Close() {
-	prdcr.Instance.Flush(1 * 1000)
-	prdcr.Instance.Close()
+func (p *producer) Close() {
+	p.Instance.Flush(1 * 1000)
+	p.Instance.Close()
 }
