@@ -5,7 +5,6 @@ import (
 
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/v1gn35h7/goshell/internal/datastore/cassdb"
 	"github.com/v1gn35h7/goshell/pkg/cmd/cli"
 	"github.com/v1gn35h7/goshell/pkg/constants"
 )
@@ -26,8 +25,6 @@ func NewCommand() *cobra.Command {
 			fmt.Println("Config path set to: ", configPath)
 			readConfig(configPath)
 
-			// Init database
-			cassdb.SetUpSession()
 		},
 	}
 
