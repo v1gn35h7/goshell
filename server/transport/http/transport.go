@@ -41,7 +41,7 @@ func MakeHandlers(srvc service.Service, logger log.Logger) http.Handler {
 	r.Handle("/api/v1/scripts", makeSaveScriptEndpointTransport(e.saveScriptEndpoint)).Methods("POST").Name("save_script")
 	r.Handle("/api/v1/scripts", makeGetScriptEndpointTransport(e.getScriptsEndpoint)).Methods("GET").Name("get_scripts")
 	r.Handle("/api/v1/results", makeSearchResultsEndpointTransport(e.searchResultsEndpoint)).Methods("GET").Name("get_results")
-	r.PathPrefix("/pprof/").Handler(http.DefaultServeMux)
+	r.PathPrefix("/debug/pprof/").Handler(http.DefaultServeMux)
 	r.PathPrefix("/").Handler(MakeFrontEndHandler())
 
 	return r

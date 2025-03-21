@@ -3,21 +3,22 @@ package service
 import (
 	"context"
 	"encoding/json"
-	"fmt"
 	"os"
 	"os/signal"
+	"strconv"
 	"sync"
 	"syscall"
 	"time"
 
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
+	"github.com/go-kit/kit/metrics"
 	"github.com/go-logr/logr"
 	"github.com/spf13/viper"
 	"github.com/v1gn35h7/goshell/pkg/elastic"
 	"github.com/v1gn35h7/goshell/pkg/goshell"
 )
 
-func IndexerService(logger logr.Logger) {
+func IndexerService(logger logr.Logger, consumerMetrics metrics.Counter) {
 	// Start kafka consumers
 	conf := make(kafka.ConfigMap)
 	conf["bootstrap.servers"] = viper.GetString("kafka.bootstrapServers")
@@ -36,7 +37,7 @@ func IndexerService(logger logr.Logger) {
 	sigchan := make(chan os.Signal, 1)
 	signal.Notify(sigchan, syscall.SIGINT, syscall.SIGTERM)
 
-	for i := 0; i < 2; i++ {
+	for i := 0; i < 1; i++ {
 		wg.Add(1)
 		go func(index int, ctx context.Context) {
 			defer wg.Done()
@@ -80,7 +81,10 @@ func IndexerService(logger logr.Logger) {
 					record, err := consumer.ReadMessage(10000 * time.Millisecond)
 					if err != nil {
 						// Errors are informational and automatically handled by the consumer
+						logger.Info("***********************************************************")
 						logger.Error(err, "Failed to read message from kafka")
+						logger.Info("***********************************************************")
+
 						continue
 					}
 					output := goshell.Output{}
@@ -88,8 +92,11 @@ func IndexerService(logger logr.Logger) {
 					if err != nil {
 						logger.Error(err, "Failed to unmarshal kafka paylod")
 					}
-					fmt.Printf("Consumed event from topic %s: key = %-10s value = %s\n",
-						*record.TopicPartition.Topic, string(record.Key), output)
+					// fmt.Printf("Consumed event from topic %s and partition %d: key = %-10s value = %s\n",
+					//	*record.TopicPartition.Topic, *&record.TopicPartition.Partition, string(record.Key), output)
+
+					lvs := []string{"topic", *record.TopicPartition.Topic, "partition", strconv.Itoa(int(record.TopicPartition.Partition)), "thread", strconv.Itoa(index), "error", ""}
+					consumerMetrics.With(lvs...).Add(1)
 
 					if output.Output != "" {
 						elastic.IndexDocument(logger, elastic.NewClient(logger), record.Value)

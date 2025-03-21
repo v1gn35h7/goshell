@@ -20,6 +20,7 @@ func IndexDocument(logger logr.Logger, esClient *elasticsearch.Client, document 
 	r := retrier.New(retrier.ConstantBackoff(3, 100*time.Millisecond), nil)
 
 	err := r.Run(func() error {
+		// logger.Info("Retrying index document", "doc", document)
 		return saveDocument(logger, esClient, document)
 	})
 
@@ -33,7 +34,7 @@ func saveDocument(logger logr.Logger, esClient *elasticsearch.Client, document [
 
 	// Set up the request object.
 	req := esapi.IndexRequest{
-		Index:      "results_001",
+		Index:      "trooper-results-00001",
 		DocumentID: uuid.NewString(),
 		Body:       bytes.NewReader(document),
 		Refresh:    "true",

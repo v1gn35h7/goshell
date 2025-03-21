@@ -5,6 +5,7 @@ import (
 
 	"github.com/confluentinc/confluent-kafka-go/v2/kafka"
 	"github.com/go-logr/zerologr"
+	"github.com/google/uuid"
 )
 
 type producer struct {
@@ -45,7 +46,7 @@ func NewProducer(conf kafka.ConfigMap, logger zerologr.Logger) *producer {
 func (p *producer) Create(topic string, record []byte) {
 	err := p.Instance.Produce(&kafka.Message{
 		TopicPartition: kafka.TopicPartition{Topic: &topic, Partition: kafka.PartitionAny},
-		Key:            record,
+		Key:            []byte(uuid.NewString()),
 		Value:          record,
 	}, nil)
 

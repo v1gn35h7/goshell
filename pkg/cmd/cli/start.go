@@ -2,7 +2,7 @@ package cli
 
 import (
 	"github.com/spf13/cobra"
-	"github.com/v1gn35h7/goshell/internal/datastore/cassdb"
+	"github.com/v1gn35h7/goshell/pkg/cassandra"
 	"github.com/v1gn35h7/goshell/pkg/logging"
 	"github.com/v1gn35h7/goshell/pkg/service"
 )
@@ -18,7 +18,7 @@ func NewStartCommand() *cobra.Command {
 			logger.Info("Logger initated...")
 
 			// Init database
-			cassdb.SetUpSession(logger)
+			cassandra.SetUpSession(logger)
 
 			goshellCtlSrvc := service.NewService(logger)
 			started, err := goshellCtlSrvc.StartService()

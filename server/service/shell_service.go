@@ -79,9 +79,9 @@ func (s service) SearchResults(query string) ([]*goshell.Output, error) {
 	for _, hit := range hits {
 		output := &goshell.Output{
 			Id:       hit.(map[string]interface{})["_id"].(string),
-			Agentid:  "--",
-			Hostname: "--",
-			Scriptid: "--",
+			Agentid:  hit.(map[string]interface{})["_source"].(map[string]interface{})["agentid"].(string),
+			Hostname: hit.(map[string]interface{})["_source"].(map[string]interface{})["hostname"].(string),
+			Scriptid: hit.(map[string]interface{})["_source"].(map[string]interface{})["scriptid"].(string),
 			Output:   hit.(map[string]interface{})["_source"].(map[string]interface{})["output"].(string),
 			Score:    hit.(map[string]interface{})["_source"].(map[string]interface{})["score"].(string),
 		}
