@@ -25,7 +25,7 @@ jobs:
       run: go build -v ./cmd/goshell/goshell.go 
     
     - name: Login to GitHub Container Registry (Optional)
-      uses: docker/login@v2
+      uses: docker/login@v3
       with:
         registry: ghcr.io
         username: ${{ github.repository_owner }}
