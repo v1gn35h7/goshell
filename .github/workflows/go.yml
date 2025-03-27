@@ -23,6 +23,26 @@ jobs:
 
     - name: Build
       run: go build -v ./cmd/goshell/goshell.go 
+    
+    - name: Login to GitHub Container Registry (Optional)
+      uses: docker/login@v2
+      with:
+        registry: ghcr.io
+        username: ${{ github.repository_owner }}
+        password: ${{ secrets.GH_TOKEN }} # Replace with your token
+
+    - name: Build Docker Image
+      run: |
+        docker build -t ghcr.io/${{ github.repository }}/my-app:${{ github.sha }} .
+        docker push ghcr.io/${{ github.repository }}/my-app:${{ github.sha }}
+
+    - name: Scan Docker Image with Trivy
+      uses: aquasecurity/trivy-action@master
+      with:
+       image-ref: ghcr.io/${{ github.repository }}/my-app:${{ github.sha }}
+       scan-type: image
+       format: sarif
+       output: trivy.sarif
 
     - name: Gosec cloudbees action
       uses: cloudbees-io/gosec-plugin@v2
