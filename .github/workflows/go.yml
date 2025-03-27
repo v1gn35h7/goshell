@@ -45,4 +45,7 @@ jobs:
        image-ref: ghcr.io/${{ github.repository }}/my-app:${{ github.sha }}
        scan-type: image
        format: sarif
-       output: trivy.sarif
+       output: /tmp/trivy.sarif
+
+    - name: Read file contents
+      run: cat /tmp/trivy.sarif
