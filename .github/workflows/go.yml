@@ -47,6 +47,11 @@ jobs:
        format: sarif
        output: trivy.sarif
 
+    - name: Upload Trivy SARIF Report
+      uses: github-code-scanning/upload-sarif@v1
+      with:
+        sarif_file: trivy.sarif
+
     - name: Gosec cloudbees action
       uses: cloudbees-io/gosec-plugin@v2
       with:
