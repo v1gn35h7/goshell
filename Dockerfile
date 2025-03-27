@@ -11,7 +11,7 @@ RUN go build -o /goshell ./cmd/goshell/
 
 
 # Artifact stage
-FROM ubuntu:latest
+FROM alpine:3.14
 
 WORKDIR /
 
