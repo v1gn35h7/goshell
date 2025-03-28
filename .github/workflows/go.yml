@@ -28,7 +28,7 @@ jobs:
       run: go build -v ./cmd/goshell/goshell.go -o gshell
 
     - name: Scan Go Binary with Trivy
-      uses: aquasecurity/trivy-action@main
+      uses: aquasecurity/trivy-action@master
       with:
         path: ./goshell
         format: sarif
