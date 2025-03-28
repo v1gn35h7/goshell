@@ -25,7 +25,7 @@ jobs:
         go-version: '1.20'
 
     - name: Build
-      run: go build -v ./cmd/goshell/goshell.go -o gshell
+      run: go build -o gshell -v ./cmd/goshell/goshell.go
 
     - name: Scan Go Binary with Trivy
       uses: aquasecurity/trivy-action@master
