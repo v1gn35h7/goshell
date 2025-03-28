@@ -30,6 +30,7 @@ jobs:
     - name: Scan Go Binary with Trivy
       uses: aquasecurity/trivy-action@master
       with:
+        scan-type: binary
         path: ./goshell
         format: sarif
         output: /tmp/trivy-binary.sarif
