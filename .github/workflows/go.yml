@@ -28,15 +28,10 @@ jobs:
       run: go build -o gshell -v ./cmd/goshell/goshell.go
 
     - name: Scan Go Binary with Trivy
-      uses: aquasecurity/trivy-action@master
-      with:
-        scan-type: image
-        path: ./goshell
-        format: sarif
-        output: /tmp/trivy-binary.sarif
-
-    - name: Read file contents
-      run: cat /tmp/trivy-binary.sarif
+      uses: anchore/scan-action@v3
+      with:       
+        image: ./goshell
+        format: sarif       
     
     - name: Login to GitHub Container Registry (Optional)
       uses: docker/login-action@v3
