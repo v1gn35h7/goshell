@@ -3,7 +3,7 @@ name: Gitleaks scan
 on:
   push:
     branches:
-    - main
+    - master
 
 jobs:
   gitleaks-codescan:
