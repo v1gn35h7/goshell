@@ -27,16 +27,5 @@ pipeline {
 
     }
 
-    post {
-        always {
-            // Optional: Actions to perform after every build (success or failure)
-            // For example, clean up workspace or publish test results
-        }
-        success {
-            // Optional: Actions to perform only on successful builds
-        }
-        failure {
-            // Optional: Actions to perform only on failed builds
-        }
-    }
+
 }
