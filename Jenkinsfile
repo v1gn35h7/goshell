@@ -1,6 +1,6 @@
 pipeline {
     agent any // Specifies that the pipeline can run on any available agent
-  tools { go '1.19' }
+  tools { go }
 
     stages {        
         stage('Build') {
