@@ -9,6 +9,7 @@ import (
 	"os/signal"
 	"syscall"
 	"time"
+	"log/slog"
 
 	kitprometheus "github.com/go-kit/kit/metrics/prometheus"
 	kitgrpc "github.com/go-kit/kit/transport/grpc"
@@ -25,10 +26,12 @@ import (
 	grpctransport "github.com/v1gn35h7/goshell/server/transport/grpc"
 	httptransport "github.com/v1gn35h7/goshell/server/transport/http"
 	"google.golang.org/grpc"
+	"github.com/mbndr/figlet4go"
 )
 
 var (
 	configPath string
+	ascii = figlet4go.NewAsciiRender()
 )
 
 func NewCommand() *cobra.Command {
@@ -53,22 +56,18 @@ func NewCommand() *cobra.Command {
 }
 
 func printLogo() {
-	fmt.Println("#########################################################")
-	fmt.Println("                                                         ")
-	fmt.Println("                                                         ")
-	fmt.Println("        \"\"\"\"\"\"\"                  \"\"\"\"\"\"\"\"\"\"\"\"                ")
-	fmt.Println("       \"\"       \"\"                            \"\"    							")
-	fmt.Println("      \"\"                                        \"\"    ")
-	fmt.Println("      \"\"                                        \"\"     ")
-	fmt.Println("      \"\"                \"\"\"\"\"\"            \"\"     ")
-	fmt.Println("      \"\"                \"        \"            \"\"     ")
-	fmt.Println("      \"\"         \"\"   \"        \"            \"\"     ")
-	fmt.Println("       \"\"        \"\"   \"        \"            \"\"     ")
-	fmt.Println("         \"\"      \"\"   \"        \"            \"\"     ")
-	fmt.Println("           \"\"\"\"\"\"   \"\"\"\"\"\"            \"\"    ")
-	fmt.Println("                                                          ")
-	fmt.Println("                                                         ")
-	fmt.Println("#########################################################")
+		// Adding the colors to RenderOptions
+	options := figlet4go.NewRenderOptions()
+	options.FontColor = []figlet4go.Color{
+		// Colors can be given by default ansi color codes...
+		figlet4go.ColorMagenta,
+	}
+	options.FontName = "larry3d"
+
+	renderStr, _ := ascii.RenderOpts("GoShell", options)
+
+	fmt.Print(renderStr)
+	
 }
 
 func bootStrapServer() {
@@ -76,7 +75,7 @@ func bootStrapServer() {
 	logger := kitlog.NewLogfmtLogger(os.Stderr)
 
 	// Init read config
-	fmt.Println("Config path set to: ", configPath)
+	slog.Info("Config path set to: ", configPath)
 	config.Read(configPath, logging.Logger())
 
 	// Init database
