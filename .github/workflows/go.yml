@@ -42,8 +42,8 @@ jobs:
 
     - name: Build Docker Image
       run: |
-        docker build -t ghcr.io/${{ github.repository }}/my-app:${{ github.sha }} .
-        docker push ghcr.io/${{ github.repository }}/my-app:${{ github.sha }}
+        docker build -t ghcr.io/${{ github.repository }}/goshell-service:${{ github.sha }} .
+        docker push ghcr.io/${{ github.repository }}/goshell-service:${{ github.sha }}
 
     - name: Scan Docker Image with Trivy
       uses: aquasecurity/trivy-action@master
