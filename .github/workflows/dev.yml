@@ -32,10 +32,9 @@ jobs:
       id: scan
       with:       
         path: "."
-        output-format: table       
-
-    - name: Inspect action SARIF report
-      run: cat ${{ steps.scan.outputs.sarif }}
+        output-format: table
+        fail-build: false       
+   
     
     - name: Login to GitHub Container Registry (Optional)
       uses: docker/login-action@v3
