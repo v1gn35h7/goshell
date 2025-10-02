@@ -1,12 +1,5 @@
-# Build stage
-FROM golang:1.25 AS build-stage
-
-WORKDIR /app
-
 # Artifact stage
 FROM alpine:3.14
-
-WORKDIR /
 
 COPY goshell /goshell
 
