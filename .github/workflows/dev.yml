@@ -30,7 +30,7 @@ jobs:
     - name: Scan Go Binary with Trivy
       uses: anchore/scan-action@v3
       with:       
-        image: ./goshell
+        path: "."
         format: sarif       
     
     - name: Login to GitHub Container Registry (Optional)
