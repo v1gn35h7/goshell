@@ -32,7 +32,7 @@ jobs:
       id: scan
       with:       
         path: "."
-        format: sarif       
+        output-format: table       
 
     - name: Inspect action SARIF report
       run: cat ${{ steps.scan.outputs.sarif }}
