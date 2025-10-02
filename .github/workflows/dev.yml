@@ -27,11 +27,15 @@ jobs:
     - name: Build
       run: go build -o gshell -v ./cmd/goshell/goshell.go
 
-    - name: Scan Go Binary with Trivy
+    - name: Scan Go Binary with Grype
       uses: anchore/scan-action@v3
+      id: scan
       with:       
         path: "."
         format: sarif       
+
+    - name: Inspect action SARIF report
+      run: cat ${{ steps.scan.outputs.sarif }}
     
     - name: Login to GitHub Container Registry (Optional)
       uses: docker/login-action@v3
