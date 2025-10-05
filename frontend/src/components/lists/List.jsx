@@ -17,11 +17,11 @@ export default function List({columns, data}) {
     
     return(
         <div class="grid">
-            <table class="hover:table-auto border-black">
+            <table class="border-collapse border border-slate-400 ...">
             <thead>
                 <tr>
                     {
-                        columns.map(col => <th align= "left">{col.header}</th>)
+                        columns.map(col => <th class="border border-slate-300 ..." align= "left">{col.header}</th>)
                     }              
                 </tr>
             </thead>
@@ -29,7 +29,7 @@ export default function List({columns, data}) {
                 {
                     dataList.map(val => {
                         return (<tr>{
-                            Object.keys(val).map(k => <td>{val[k]}</td>)
+                            Object.keys(val).map(k => <td class="border border-slate-300 ...">{val[k]}</td>)
                         }</tr>);
                     })
                 }    

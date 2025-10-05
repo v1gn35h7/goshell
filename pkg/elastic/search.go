@@ -13,13 +13,16 @@ import (
 func Search(query string, esClient *elasticsearch.Client, logger logr.Logger) ([]interface{}, error) {
 	// Build the request body.
 	var buf bytes.Buffer
-	esquery := map[string]interface{}{
-		"query": map[string]interface{}{
+	esquery := map[string]interface{}{}
+
+	if len(query) > 0 {
+		esquery["query"] = map[string]interface{}{
 			"match": map[string]interface{}{
 				"output": query,
 			},
-		},
+		}
 	}
+
 	if err := json.NewEncoder(&buf).Encode(esquery); err != nil {
 		logger.Error(err, "Error encoding query")
 		return nil, err
@@ -28,7 +31,7 @@ func Search(query string, esClient *elasticsearch.Client, logger logr.Logger) ([
 	// Perform the search request.
 	res, err := esClient.Search(
 		esClient.Search.WithContext(context.Background()),
-		esClient.Search.WithIndex("result*"),
+		esClient.Search.WithIndex("trooper-results*"),
 		esClient.Search.WithBody(&buf),
 		esClient.Search.WithTrackTotalHits(true),
 		esClient.Search.WithPretty(),

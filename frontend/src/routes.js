@@ -8,8 +8,8 @@ import ScriptNew from "./pages/scripts/ScriptNew";
 var routes = [
     {
         path: "/",
-        loader: () => ({ message: "Hello, welcome to FirstApp!" }),
-        element: <Dashboard />,
+        loader: () => ({ message: "Hello, welcome to GoShell!" }),
+        element: <Search />,
       },
       {
         path: "/assets",

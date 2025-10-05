@@ -33,7 +33,7 @@ export default function Search(){
     return (
         <div class="grid">
             <div class="text-xl">
-            Search...
+            Search Telemetry...
             </div>
 
             <SearchBar 
